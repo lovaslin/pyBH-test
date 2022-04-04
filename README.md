@@ -19,7 +19,7 @@ pip install -r requirement.txt
 
 * Run the test you want (example for signal injection)
 ```bash
-cd signal-injection
+cd Signal-injection
 python injection_test.py
 ```
 
