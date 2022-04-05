@@ -57,7 +57,6 @@ print(f'total number of signal to test : {len(wp) * Nsig.size}')
 # Free some memory and keep only bkf histograms
 del fnoise
 del bkg
-del bkg_cor
 
 # Function to create folders only if they don't exists
 def safe_mkdir(name):
@@ -209,7 +208,6 @@ for s in range(len(wp)):
             # Free some memory and keep histograms only
             del dnoise
             del data
-            del data_cor
             
             # Run all the scans
             print(f'####scan{i}')
