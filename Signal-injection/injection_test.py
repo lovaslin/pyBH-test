@@ -31,13 +31,13 @@ bh1 = BH.BumpHunter1D(
     scan_step=1,
     bins=bins,
     rang=rng,
-    npe=40_000,
+    npe=80_000,
     nworker=1,
     signal_exp = 1000,
     str_min=0.1,
     str_step=0.1,
     str_scale='lin',
-    sigma_limit=5,
+    sigma_limit=3,
     npe_inject=200,
     seed=666
 )
