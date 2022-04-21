@@ -4,6 +4,10 @@ This repository rasemble all the codes used to perform the test in the arcicle "
 
 The results were obtained, using pyBumpHunter v0.4.0.
 
+[Link](https://github.com/scikit-hep/pyBumpHunter) to pyBumpHunter repository  
+Link to the paper [not yet]
+
+
 ## Instruction to run the tests
 
 * Create a new python environement
