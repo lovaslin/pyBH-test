@@ -167,8 +167,28 @@ for i, n in enumerate(Nsig):
         
         # Do bump and stat plots
         if ii == 0:
+            bh_sb.plot_bump(
+                hist_data,
+                hist_bkg,
+                is_hist=True,
+                filename=f'bumps/SB/bump_Nsig={n}.png'
+            )
             bh_sb.plot_stat(show_Pval=True, filename=f'stat/SB/BHstat_Nsig={n}.png')
+            
+            bh_sbw.plot_bump(
+                hist_data,
+                hist_bkg,
+                is_hist=True,
+                filename=f'bumps/SBw/bump_Nsig={n}.png'
+            )
             bh_sbw.plot_stat(show_Pval=True, filename=f'stat/SBw/BHstat_Nsig={n}.png')
+            
+            bh_norm.plot_bump(
+                hist_data,
+                hist_bkg_norm,
+                is_hist=True,
+                filename=f'bumps/norm/bump_Nsig={n}.png'
+            )
             bh_norm.plot_stat(show_Pval=True, filename=f'stat/norm/BHstat_Nsig={n}.png')
         
     # Convert lists to numpy arrays
@@ -207,13 +227,13 @@ safe_mkdir('results/')
 
 # Reco position vs true Nsig
 F = plt.figure(figsize=(10,6))
-plt.errorbar(Nsig, rpos[:,0], yerr=rprms[:,0], fmt='ro', markersize=7, lw=2, label='SB (sw=0)')
-plt.errorbar(Nsig, rpos[:,1], yerr=rprms[:,1], fmt='bx', markersize=10 ,lw=2, label='SB (sw=5)')
-plt.errorbar(Nsig, rpos[:,2], yerr=rprms[:,2], fmt='gv', markersize=7 ,lw=2, label='norm')
+plt.errorbar(Nsig, rpos[:,0], yerr=rprms[:,0], fmt='ro', markersize=7, lw=2, label='excluded width = 0')
+plt.errorbar(Nsig, rpos[:,1], yerr=rprms[:,1], fmt='bx', markersize=10 ,lw=2, label='excluded width = 5')
+plt.errorbar(Nsig, rpos[:,2], yerr=rprms[:,2], fmt='gv', markersize=7 ,lw=2, label='no normalization')
 plt.hlines(pos, Nsig[0], Nsig[-1], color='g', linestyle='dashed', lw=2, label='true')
 plt.legend(fontsize='xx-large')
-plt.xlabel('Nsig true', size='xx-large')
-plt.ylabel('position', size='xx-large')
+plt.xlabel('Number of signal events', size='xx-large')
+plt.ylabel('Bump position', size='xx-large')
 plt.xticks(fontsize='xx-large')
 plt.yticks(fontsize='xx-large')
 plt.savefig('results/SB_reco_pos.png', bbox_inches='tight')
@@ -221,12 +241,12 @@ plt.close(F)
 
 # Reco width vs true Nsig
 F = plt.figure(figsize=(10,6))
-plt.errorbar(Nsig, rwidth[:,0], yerr=rwrms[:,0], fmt='ro', markersize=7, lw=2, label='SB (sw=0)')
-plt.errorbar(Nsig, rwidth[:,1], yerr=rwrms[:,1], fmt='bx', markersize=10, lw=2, label='SB (sw=5)')
-plt.errorbar(Nsig, rwidth[:,2], yerr=rwrms[:,2], fmt='gv', markersize=7, lw=2, label='norm')
+plt.errorbar(Nsig, rwidth[:,0], yerr=rwrms[:,0], fmt='ro', markersize=7, lw=2, label='excluded width = 0')
+plt.errorbar(Nsig, rwidth[:,1], yerr=rwrms[:,1], fmt='bx', markersize=10, lw=2, label='excluded width = 5')
+plt.errorbar(Nsig, rwidth[:,2], yerr=rwrms[:,2], fmt='gv', markersize=7, lw=2, label='no normalization')
 plt.legend(fontsize='xx-large')
-plt.xlabel('Nsig true', size='xx-large')
-plt.ylabel('width', size='xx-large')
+plt.xlabel('Number of signal events', size='xx-large')
+plt.ylabel('Bump width', size='xx-large')
 plt.xticks(fontsize='xx-large')
 plt.yticks(fontsize='xx-large')
 plt.savefig('results/SB_reco_width.png', bbox_inches='tight')
@@ -234,13 +254,13 @@ plt.close(F)
 
 # Reco Nsig vs true Nsig
 F = plt.figure(figsize=(10,6))
-plt.errorbar(Nsig, rsig[:,0], yerr=rsrms[:,0], fmt='ro', markersize=7, lw=2, label='SB (sw=0)')
-plt.errorbar(Nsig, rsig[:,1], yerr=rsrms[:,1], fmt='bx', markersize=10, lw=2, label='SB (sw=5)')
-plt.errorbar(Nsig, rsig[:,2], yerr=rsrms[:,2], fmt='gv', markersize=7, lw=2, label='norm')
+plt.errorbar(Nsig, rsig[:,0], yerr=rsrms[:,0], fmt='ro', markersize=7, lw=2, label='excluded width = 0')
+plt.errorbar(Nsig, rsig[:,1], yerr=rsrms[:,1], fmt='bx', markersize=10, lw=2, label='excluded width = 5')
+plt.errorbar(Nsig, rsig[:,2], yerr=rsrms[:,2], fmt='gv', markersize=7, lw=2, label='no normalization')
 plt.plot(Nsig, Nsig, 'g--', lw=2, label='true')
 plt.legend(fontsize='xx-large')
-plt.xlabel('Nsig true', size='xx-large')
-plt.ylabel('Nsig reco', size='xx-large')
+plt.xlabel('Number of signal events (true)', size='xx-large')
+plt.ylabel('Evaluated number of signal events', size='xx-large')
 plt.xticks(fontsize='xx-large')
 plt.yticks(fontsize='xx-large')
 plt.savefig('results/SB_reco_Nsig.png', bbox_inches='tight')
@@ -248,12 +268,12 @@ plt.close(F)
 
 # Local negative log p-value vs true Nsig
 F = plt.figure(figsize=(10,6))
-plt.errorbar(Nsig, rllp[:,0], yerr=rlrms[:,0], fmt='ro', markersize=7, lw=2, label='SB (sw=0)')
-plt.errorbar(Nsig, rllp[:,1], yerr=rlrms[:,1], fmt='bx', markersize=10, lw=2, label='SB (sw=5)')
-plt.errorbar(Nsig, rllp[:,2], yerr=rlrms[:,2], fmt='gv', markersize=7, lw=2, label='norm')
+plt.errorbar(Nsig, rllp[:,0], yerr=rlrms[:,0], fmt='ro', markersize=7, lw=2, label='excluded width = 0')
+plt.errorbar(Nsig, rllp[:,1], yerr=rlrms[:,1], fmt='bx', markersize=10, lw=2, label='excluded width = 5')
+plt.errorbar(Nsig, rllp[:,2], yerr=rlrms[:,2], fmt='gv', markersize=7, lw=2, label='no normalization')
 plt.legend(fontsize='xx-large')
-plt.xlabel('Nsig true', size='xx-large')
-plt.ylabel('-ln(local p-value)', size='xx-large')
+plt.xlabel('Number of signal events', size='xx-large')
+plt.ylabel('test statistic', size='xx-large')
 plt.xticks(fontsize='xx-large')
 plt.yticks(fontsize='xx-large')
 plt.savefig('results/SB_local_pval.png', bbox_inches='tight')
@@ -261,11 +281,11 @@ plt.close(F)
 
 # Global significance vs true Nsig
 F = plt.figure(figsize=(10,6))
-plt.errorbar(Nsig, rgsig[:,0], yerr=rgrms[:,0], fmt='ro', markersize=7, lw=2, label='SB (sw=0)')
-plt.errorbar(Nsig, rgsig[:,1], yerr=rgrms[:,1], fmt='bx', markersize=10, lw=2, label='SB (sw=5)')
-plt.errorbar(Nsig, rgsig[:,2], yerr=rgrms[:,2], fmt='gv', markersize=7, lw=2, label='norm')
+plt.errorbar(Nsig, rgsig[:,0], yerr=rgrms[:,0], fmt='ro', markersize=7, lw=2, label='excluded width = 5')
+plt.errorbar(Nsig, rgsig[:,1], yerr=rgrms[:,1], fmt='bx', markersize=10, lw=2, label='excluded width = 0')
+plt.errorbar(Nsig, rgsig[:,2], yerr=rgrms[:,2], fmt='gv', markersize=7, lw=2, label='no normalization')
 plt.legend(fontsize='xx-large')
-plt.xlabel('Nsig true', size='xx-large')
+plt.xlabel('Number of signal events', size='xx-large')
 plt.ylabel('global significance', size='xx-large')
 plt.xticks(fontsize='xx-large')
 plt.yticks(fontsize='xx-large')
@@ -281,7 +301,7 @@ plt.plot(Nsig, rpos[:,0]/rpos[:,2], 'ro', markersize=7 ,lw=2, label='SB (sw=0) /
 plt.plot(Nsig, rpos[:,1]/rpos[:,2], 'bx', markersize=10 ,lw=2, label='SB (sw=5) / norm')
 plt.hlines(1, Nsig[0], Nsig[-1], color='g', linestyle='dashed', lw=2)
 plt.legend(fontsize='xx-large')
-plt.xlabel('Nsig true', size='xx-large')
+plt.xlabel('Number of signal events', size='xx-large')
 plt.ylabel('mean position ratio', size='xx-large')
 plt.xticks(fontsize='xx-large')
 plt.yticks(fontsize='xx-large')
@@ -294,7 +314,7 @@ plt.plot(Nsig, rwidth[:,0]/rwidth[:,2], 'ro', markersize=7 ,lw=2, label='SB (sw=
 plt.plot(Nsig, rwidth[:,1]/rwidth[:,2], 'bx', markersize=10 ,lw=2, label='SB (sw=5) / norm')
 plt.hlines(1, Nsig[0], Nsig[-1], color='g', linestyle='dashed', lw=2)
 plt.legend(fontsize='xx-large')
-plt.xlabel('Nsig true', size='xx-large')
+plt.xlabel('Number of signal events', size='xx-large')
 plt.ylabel('mean width ratio', size='xx-large')
 plt.xticks(fontsize='xx-large')
 plt.yticks(fontsize='xx-large')
@@ -307,7 +327,7 @@ plt.plot(Nsig, rsig[:,0]/rsig[:,2], 'ro', markersize=7 ,lw=2, label='SB (sw=0) /
 plt.plot(Nsig, rsig[:,1]/rsig[:,2], 'bx', markersize=10 ,lw=2, label='SB (sw=5) / norm')
 plt.hlines(1, Nsig[0], Nsig[-1], color='g', linestyle='dashed', lw=2)
 plt.legend(fontsize='xx-large')
-plt.xlabel('Nsig true', size='xx-large')
+plt.xlabel('Number of signal events', size='xx-large')
 plt.ylabel('mean Nsig reco ratio', size='xx-large')
 plt.xticks(fontsize='xx-large')
 plt.yticks(fontsize='xx-large')
@@ -320,7 +340,7 @@ plt.plot(Nsig, rllp[:,0]/rllp[:,2], 'ro', markersize=7 ,lw=2, label='SB (sw=0) /
 plt.plot(Nsig, rllp[:,1]/rllp[:,2], 'bx', markersize=10 ,lw=2, label='SB (sw=5) / norm')
 plt.hlines(1, Nsig[0], Nsig[-1], color='g', linestyle='dashed', lw=2)
 plt.legend(fontsize='xx-large')
-plt.xlabel('Nsig true', size='xx-large')
+plt.xlabel('Number of signal events', size='xx-large')
 plt.ylabel('mean test statistic ratio', size='xx-large')
 plt.xticks(fontsize='xx-large')
 plt.yticks(fontsize='xx-large')
@@ -333,7 +353,7 @@ plt.plot(Nsig[1:], rgsig[1:,0]/rgsig[1:,2], 'ro', markersize=7 ,lw=2, label='SB 
 plt.plot(Nsig[1:], rgsig[1:,1]/rgsig[1:,2], 'bx', markersize=10 ,lw=2, label='SB (sw=5) / norm')
 plt.hlines(1, Nsig[0], Nsig[-1], color='g', linestyle='dashed', lw=2)
 plt.legend(fontsize='xx-large')
-plt.xlabel('Nsig true', size='xx-large')
+plt.xlabel('Number of signal events', size='xx-large')
 plt.ylabel('mean global significance ratio', size='xx-large')
 plt.xticks(fontsize='xx-large')
 plt.yticks(fontsize='xx-large')
