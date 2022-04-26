@@ -39,6 +39,25 @@ hist_bkg = hist_bkg / dscl
 hist_bkg1 = hist_bkg.sum(axis=1)
 hist_bkg2 = hist_bkg.sum(axis=0)
 
+# Version of the background with correlations
+bkg_cor = np.copy(bkg)
+r = np.array([[1.,0.07], [0.5,1.]])
+bkg_cor = np.dot(r, bkg_cor.T).T
+print('correlations :')
+print(np.corrcoef(bkg_cor, rowvar=False))
+
+# Histograms with correlations
+hist_bkg_cor, _, _ = np.histogram2d(
+    bkg_cor[:,0],
+    bkg_cor[:,1],
+    bins=[binx,biny],
+    range=[[0,25],[0,25]]
+)
+hist_bkg_cor = hist_fnoise + hist_bkg_cor
+hist_bkg_cor = hist_bkg_cor / dscl
+hist_bkg_cor1 = hist_bkg_cor.sum(axis=1)
+hist_bkg_cor2 = hist_bkg_cor.sum(axis=0)
+
 
 ## Initialization
 
@@ -57,6 +76,7 @@ print(f'total number of signal to test : {len(wp) * Nsig.size}')
 # Free some memory and keep only bkf histograms
 del fnoise
 del bkg
+del bkg_cor
 
 # Function to create folders only if they don't exists
 def safe_mkdir(name):
@@ -65,41 +85,62 @@ def safe_mkdir(name):
     return
 
 # Make all needed folders
+safe_mkdir('BumpBH/')
+safe_mkdir('BumpBH/2Dnocorr')
+safe_mkdir('BumpBH/2Dcorr')
+safe_mkdir('BumpBH/1Dnocorr')
+safe_mkdir('BumpBH/1Dcorr')
+
 safe_mkdir('results/')
-safe_mkdir('results/2D')
-safe_mkdir('results/1D')
+safe_mkdir('results/2Dnocorr')
+safe_mkdir('results/2Dcorr')
+safe_mkdir('results/1Dnocorr')
+safe_mkdir('results/1Dcorr')
 
 safe_mkdir('stat/')
-safe_mkdir('stat/2D')
-safe_mkdir('stat/1D')
+safe_mkdir('stat/2Dnocorr')
+safe_mkdir('stat/2Dcorr')
+safe_mkdir('stat/1Dnocorr')
+safe_mkdir('stat/1Dcorr')
 
 
 # Initialize results variables for 2D scans
-rpos = np.empty((len(wp), Nsig.size, 2))  # pos [wp, Nsig, xy]
-rwidth = np.empty((len(wp), Nsig.size, 2)) # width [wp, Nsig, xy]
-rsig = np.empty((len(wp), Nsig.size)) # signal eval  [wp, Nsi]
-rllp = np.empty((len(wp), Nsig.size)) # t = -log(local p-value)  [wp, Nsig]
-rgsig = np.empty((len(wp), Nsig.size)) # global significance  [wp, Nsig]
-rprms = np.empty((len(wp), Nsig.size, 2))
-rwrms = np.empty((len(wp), Nsig.size, 2))
-rsrms = np.empty((len(wp), Nsig.size))
-rlrms = np.empty((len(wp), Nsig.size))
-rgrms = np.empty((len(wp), Nsig.size))
+rpos = np.empty((len(wp), Nsig.size, 2, 2))  # pos [wp, Nsig, (no)cor, xy]
+rwidth = np.empty((len(wp), Nsig.size, 2, 2)) # width [wp, Nsig, (no)cor, xy]
+rsig = np.empty((len(wp), Nsig.size, 2)) # signal eval  [wp, Nsig, (no)cor]
+rllp = np.empty((len(wp), Nsig.size, 2)) # t = -log(local p-value)  [wp, Nsig, (no)cor]
+rgsig = np.empty((len(wp), Nsig.size, 2)) # global significance  [wp, Nsig, (no)cor]
+rprms = np.empty((len(wp), Nsig.size, 2, 2))
+rwrms = np.empty((len(wp), Nsig.size, 2, 2))
+rsrms = np.empty((len(wp), Nsig.size, 2))
+rlrms = np.empty((len(wp), Nsig.size, 2))
+rgrms = np.empty((len(wp), Nsig.size, 2))
 
 # Initialize results variables for 1D scans
-rpos1 = np.empty((len(wp), Nsig.size, 2))  # pos [wp, Nsig, xy]
-rwidth1 = np.empty((len(wp), Nsig.size, 2)) # width [wp, Nsig, xy]
-rsig1 = np.empty((len(wp), Nsig.size, 2)) # signal eval  [wp, Nsig, xy]
-rllp1 = np.empty((len(wp), Nsig.size, 2)) # t = -log(local p-value)  [wp, Nsig, xy]
-rgsig1 = np.empty((len(wp), Nsig.size, 2)) # global significance  [wp, Nsig, xy]
-rprms1 = np.empty((len(wp), Nsig.size, 2))
-rwrms1 = np.empty((len(wp), Nsig.size, 2))
-rsrms1 = np.empty((len(wp), Nsig.size, 2))
-rlrms1 = np.empty((len(wp), Nsig.size, 2))
-rgrms1 = np.empty((len(wp), Nsig.size, 2))
+rpos1 = np.empty((len(wp), Nsig.size, 2, 2))  # pos [wp, Nsig, (no)cor, xy]
+rwidth1 = np.empty((len(wp), Nsig.size, 2, 2)) # width [wp, Nsig, (no)cor, xy]
+rsig1 = np.empty((len(wp), Nsig.size, 2, 2)) # signal eval  [wp, Nsig, (no)cor, xy]
+rllp1 = np.empty((len(wp), Nsig.size, 2, 2)) # t = -log(local p-value)  [wp, Nsig, (no)cor, xy]
+rgsig1 = np.empty((len(wp), Nsig.size, 2, 2)) # global significance  [wp, Nsig, (no)cor, xy]
+rprms1 = np.empty((len(wp), Nsig.size, 2, 2))
+rwrms1 = np.empty((len(wp), Nsig.size, 2, 2))
+rsrms1 = np.empty((len(wp), Nsig.size, 2, 2))
+rlrms1 = np.empty((len(wp), Nsig.size, 2, 2))
+rgrms1 = np.empty((len(wp), Nsig.size, 2, 2))
 
 # Initiate 2 BumpHunter2D instances
 bh_2d = BH.BumpHunter2D(
+    rang=[[0,25],[0,25]],
+    width_min=[2,2],
+    width_max=[5,5],
+    width_step=[1,1],
+    scan_step=[1,1],
+    bins=[binx,biny],
+    npe=20000,
+    nworker=1,
+    seed=666
+)
+bh_2d_cor = BH.BumpHunter2D(
     rang=[[0,25],[0,25]],
     width_min=[2,2],
     width_max=[5,5],
@@ -135,6 +176,30 @@ bh_1d2 = BH.BumpHunter1D(
     seed=666
 )
 
+bh_1d_cor1 = BH.BumpHunter1D(
+    rang=[0,25],
+    width_min=2,
+    width_max=5,
+    width_step=1,
+    scan_step=1,
+    bins=binx,
+    npe=20000,
+    nworker=1,
+    seed=666
+)
+bh_1d_cor2 = BH.BumpHunter1D(
+    rang=[0,25],
+    width_min=2,
+    width_max=5,
+    width_step=1,
+    scan_step=1,
+    bins=biny,
+    npe=20000,
+    nworker=1,
+    seed=666
+)
+
+
 ## Scans loop
 
 # Loop over the positions and width
@@ -147,17 +212,17 @@ for s in range(len(wp)):
         print(f'##########Nsig={Nsig[n]}')
         
         # Initialize the local list
-        lpos = np.empty((100, 2)) # [:, (no)cor, xy]
-        lwidth = np.empty((100, 2)) # [:, (no)cor, xy]
-        lsig = np.empty(100) # [:]
-        lllp = np.empty(100) # [:]
-        lgsig = np.empty(100) # [:]
+        lpos = np.empty((100, 2, 2)) # [:, (no)cor, xy]
+        lwidth = np.empty((100, 2, 2)) # [:, (no)cor, xy]
+        lsig = np.empty((100, 2)) # [:, (no)cor]
+        lllp = np.empty((100, 2)) # [:, (no)cor]
+        lgsig = np.empty((100, 2)) # [:, (no)cor]
         
-        lpos1 = np.empty((100, 2)) # [:, xy]
-        lwidth1 = np.empty((100, 2)) # [:, xy]
-        lsig1 = np.empty((100, 2)) # [:, xy]
-        lllp1 = np.empty((100, 2)) # [:, xy]
-        lgsig1 = np.empty((100, 2)) # [:, xy]
+        lpos1 = np.empty((100, 2, 2)) # [:, (no)cor, xy]
+        lwidth1 = np.empty((100, 2, 2)) # [:, (no)cor, xy]
+        lsig1 = np.empty((100, 2, 2)) # [:, (no)cor, xy]
+        lllp1 = np.empty((100, 2, 2)) # [:, (no)cor, xy]
+        lgsig1 = np.empty((100, 2, 2)) # [:, (no)cor, xy]
         
         # Generate the signal
         np.random.seed(666)
@@ -197,23 +262,45 @@ for s in range(len(wp)):
             hist_data1 = hist_data.sum(axis=1)
             hist_data2 = hist_data.sum(axis=0)
             
+            # Create the data with correlation
+            data_cor = np.copy(data)
+            data_cor = np.dot(r, data_cor.T).T
+            
+            # Histogram it
+            hist_data_cor, _, _ = np.histogram2d(
+                data_cor[:,0],
+                data_cor[:,1],
+                bins=[binx,biny],
+                range=[[0,25], [0,25]]
+            )
+            hist_data_cor = hist_dnoise + hist_data_cor
+            hist_data_cor1 = hist_data_cor.sum(axis=1)
+            hist_data_cor2 = hist_data_cor.sum(axis=0)
+            
             # Add signal if needed
             if Nsig[n] > 0:
                 hist_data = hist_data + hist_sig
+                hist_data_cor = hist_data_cor + hist_sig
                 hist_data1 = hist_data1 + hist_sig1
+                hist_data_cor1 = hist_data_cor1 + hist_sig1
                 hist_data2 = hist_data2 + hist_sig2
+                hist_data_cor2 = hist_data_cor2 + hist_sig2
             if i == 0:
                 print(f'data.shape={data.shape}')
             
             # Free some memory and keep histograms only
             del dnoise
             del data
+            del data_cor
             
             # Run all the scans
             print(f'####scan{i}')
             bh_2d.bump_scan(hist_data, hist_bkg, is_hist=True, do_pseudo=is_first)
+            bh_2d_cor.bump_scan(hist_data_cor, hist_bkg_cor, is_hist=True, do_pseudo=is_first)
             bh_1d1.bump_scan(hist_data1, hist_bkg1, is_hist=True, do_pseudo=is_first)
             bh_1d2.bump_scan(hist_data2, hist_bkg2, is_hist=True, do_pseudo=is_first)
+            bh_1d_cor1.bump_scan(hist_data_cor1, hist_bkg_cor1, is_hist=True, do_pseudo=is_first)
+            bh_1d_cor2.bump_scan(hist_data_cor2, hist_bkg_cor2, is_hist=True, do_pseudo=is_first)
             if(is_first):
                 is_first = False
             
@@ -222,73 +309,167 @@ for s in range(len(wp)):
                 (binx[bh_2d.min_loc_ar[0][0]] + binx[bh_2d.min_loc_ar[0][0] + bh_2d.min_width_ar[0][0]]) / 2,
                 (biny[bh_2d.min_loc_ar[0][1]] + biny[bh_2d.min_loc_ar[0][1] + bh_2d.min_width_ar[0][1]]) / 2
             ]
+            pcor = [
+                (binx[bh_2d_cor.min_loc_ar[0][0]] + binx[bh_2d_cor.min_loc_ar[0][0] + bh_2d_cor.min_width_ar[0][0]]) / 2,
+                (biny[bh_2d_cor.min_loc_ar[0][1]] + biny[bh_2d_cor.min_loc_ar[0][1] + bh_2d_cor.min_width_ar[0][1]]) / 2
+            ]
             wnocor = [
                 (binx[bh_2d.min_loc_ar[0][0] + bh_2d.min_width_ar[0][0]] - binx[bh_2d.min_loc_ar[0][0]]),
                 (biny[bh_2d.min_loc_ar[0][1] + bh_2d.min_width_ar[0][1]] - biny[bh_2d.min_loc_ar[0][1]])
             ]
-            lpos[i] = np.array([pnocor[0], pnocor[1]])
-            lwidth[i] = np.array([wnocor[0], wnocor[1]])
-            lsig[i] = bh_2d.signal_eval
-            lllp[i] = bh_2d.t_ar[0]
-            lgsig[i] = bh_2d.significance
+            wcor = [
+                (binx[bh_2d_cor.min_loc_ar[0][0] + bh_2d_cor.min_width_ar[0][0]] - binx[bh_2d_cor.min_loc_ar[0][0]]),
+                (biny[bh_2d_cor.min_loc_ar[0][1] + bh_2d_cor.min_width_ar[0][1]] - biny[bh_2d_cor.min_loc_ar[0][1]])
+            ]
+            lpos[i] = np.array([
+                [pnocor[0], pnocor[1]],
+                [pcor[0], pcor[1]],
+            ])
+            lwidth[i] = np.array([
+                [wnocor[0], wnocor[1]],
+                [wcor[0], wcor[1]],
+            ])
+            lsig[i] = np.array([bh_2d.signal_eval, bh_2d_cor.signal_eval])
+            lllp[i] = np.array([bh_2d.t_ar[0], bh_2d_cor.t_ar[0]])
+            lgsig[i] = np.array([bh_2d.significance, bh_2d_cor.significance])
             
             # Compute pos and width and fill local arrays (1D)
             pnocor = [
                 (binx[bh_1d1.min_loc_ar[0]] + binx[bh_1d1.min_loc_ar[0] + bh_1d1.min_width_ar[0]]) / 2,
                 (biny[bh_1d2.min_loc_ar[0]] + biny[bh_1d2.min_loc_ar[0] + bh_1d2.min_width_ar[0]]) / 2
             ]
+            pcor = [
+                (binx[bh_1d_cor1.min_loc_ar[0]] + binx[bh_1d_cor1.min_loc_ar[0] + bh_1d_cor1.min_width_ar[0]]) / 2,
+                (biny[bh_1d_cor2.min_loc_ar[0]] + biny[bh_1d_cor2.min_loc_ar[0] + bh_1d_cor2.min_width_ar[0]]) / 2
+            ]
             wnocor = [
                 binx[bh_1d1.min_loc_ar[0] + bh_1d1.min_width_ar[0]] - binx[bh_1d1.min_loc_ar[0]],
                 biny[bh_1d2.min_loc_ar[0] + bh_1d2.min_width_ar[0]] - biny[bh_1d2.min_loc_ar[0]]
             ]
+            wcor = [
+                binx[bh_1d_cor1.min_loc_ar[0] + bh_1d_cor1.min_width_ar[0]] - binx[bh_1d_cor1.min_loc_ar[0]],
+                biny[bh_1d_cor2.min_loc_ar[0] + bh_1d_cor2.min_width_ar[0]] - biny[bh_1d_cor2.min_loc_ar[0]]
+            ]
             lpos1[i] = np.array([
-                [pnocor[0], pnocor[1]]
+                [pnocor[0], pnocor[1]],
+                [pcor[0], pcor[1]],
             ])
-            lwidth1[i] = np.array([wnocor[0], wnocor[1]])
-            lsig1[i] = np.array([bh_1d1.signal_eval, bh_1d2.signal_eval])
-            lllp1[i] = np.array([bh_1d1.t_ar[0], bh_1d2.t_ar[0]])
-            lgsig1[i] = np.array([bh_1d1.significance, bh_1d2.significance])
+            lwidth1[i] = np.array([
+                [wnocor[0], wnocor[1]],
+                [wcor[0], wcor[1]],
+            ])
+            lsig1[i] = np.array([
+                [bh_1d1.signal_eval, bh_1d2.signal_eval],
+                [bh_1d_cor1.signal_eval, bh_1d_cor2.signal_eval]
+            ])
+            lllp1[i] = np.array([
+                [bh_1d1.t_ar[0], bh_1d2.t_ar[0]],
+                [bh_1d_cor1.t_ar[0], bh_1d_cor2.t_ar[0]]
+            ])
+            lgsig1[i] = np.array([
+                [bh_1d1.significance, bh_1d2.significance],
+                [bh_1d_cor1.significance, bh_1d_cor2.significance]
+            ])
             
-            # Do the first stat plots
+            # Do the first bump plots
             if(i==0):
+                bh_2d.plot_bump(
+                    hist_data,
+                    hist_bkg,
+                    is_hist=True,
+                    filename=f'BumpBH/2Dnocorr/pos[{wp[s][0,0]}-{wp[s][0,1]}]'
+                             f'width[{wp[s][1,0]}-{wp[s][1,1]}]Ns{Nsig[n]}.png'
+                )
+                bh_2d_cor.plot_bump(
+                    hist_data_cor,
+                    hist_bkg_cor,
+                    is_hist=True,
+                    filename=f'BumpBH/2Dcorr/pos[{wp[s][0,0]}-{wp[s][0,1]}]'
+                             f'width[{wp[s][1,0]}-{wp[s][1,1]}]Ns{Nsig[n]}.png'
+                )
+                bh_1d1.plot_bump(
+                    hist_data1,
+                    hist_bkg1,
+                    is_hist=True,
+                    filename=f'BumpBH/1Dnocorr/pos[{wp[s][0,0]}-{wp[s][0,1]}]'
+                             f'width[{wp[s][1,0]}-{wp[s][1,1]}]Ns{Nsig[n]}X.png'
+                )
+                bh_1d2.plot_bump(
+                    hist_data2,
+                    hist_bkg2,
+                    is_hist=True,
+                    filename=f'BumpBH/1Dnocorr/pos[{wp[s][0,0]}-{wp[s][0,1]}]'
+                             f'width[{wp[s][1,0]}-{wp[s][1,1]}]Ns{Nsig[n]}Y.png'
+                )
+                bh_1d_cor1.plot_bump(
+                    hist_data_cor1,
+                    hist_bkg_cor1,
+                    is_hist=True,
+                    filename=f'BumpBH/1Dcorr/pos[{wp[s][0,0]}-{wp[s][0,1]}]'
+                             f'width[{wp[s][1,0]}-{wp[s][1,1]}]Ns{Nsig[n]}X.png'
+                )
+                bh_1d_cor2.plot_bump(
+                    hist_data_cor2,
+                    hist_bkg_cor2,
+                    is_hist=True,
+                    filename=f'BumpBH/1Dcorr/pos[{wp[s][0,0]}-{wp[s][0,1]}]'
+                             f'width[{wp[s][1,0]}-{wp[s][1,1]}]Ns{Nsig[n]}Y.png'
+                )
+                
+                # Do first BHstat plot
                 bh_2d.plot_stat(
                     show_Pval=True,
-                    filename=f'stat/2D/pos[{wp[s][0,0]}-{wp[s][0,1]}]'
+                    filename=f'stat/2Dnocorr/pos[{wp[s][0,0]}-{wp[s][0,1]}]'
+                             f'width[{wp[s][1,0]}-{wp[s][1,1]}]Ns{Nsig[n]}.png'
+                )
+                bh_2d_cor.plot_stat(
+                    show_Pval=True,
+                    filename=f'stat/2Dcorr/pos[{wp[s][0,0]}-{wp[s][0,1]}]'
                              f'width[{wp[s][1,0]}-{wp[s][1,1]}]Ns{Nsig[n]}.png'
                 )
                 bh_1d1.plot_stat(
                     show_Pval=True,
-                    filename=f'stat/1D/pos[{wp[s][0,0]}-{wp[s][0,1]}]'
+                    filename=f'stat/1Dnocorr/pos[{wp[s][0,0]}-{wp[s][0,1]}]'
                              f'width[{wp[s][1,0]}-{wp[s][1,1]}]Ns{Nsig[n]}X.png'
                 )
                 bh_1d2.plot_stat(
                     show_Pval=True,
-                    filename=f'stat/1D/pos[{wp[s][0,0]}-{wp[s][0,1]}]'
+                    filename=f'stat/1Dnocorr/pos[{wp[s][0,0]}-{wp[s][0,1]}]'
+                             f'width[{wp[s][1,0]}-{wp[s][1,1]}]Ns{Nsig[n]}Y.png'
+                )
+                bh_1d_cor1.plot_stat(
+                    show_Pval=True,
+                    filename=f'stat/1Dcorr/pos[{wp[s][0,0]}-{wp[s][0,1]}]'
+                             f'width[{wp[s][1,0]}-{wp[s][1,1]}]Ns{Nsig[n]}X.png'
+                )
+                bh_1d_cor2.plot_stat(
+                    show_Pval=True,
+                    filename=f'stat/1Dcorr/pos[{wp[s][0,0]}-{wp[s][0,1]}]'
                              f'width[{wp[s][1,0]}-{wp[s][1,1]}]Ns{Nsig[n]}Y.png'
                 )
         
         # Fill mean and rms to global result arrays
-        rpos[s,n,:] = lpos.mean(axis=0)
-        rprms[s,n,:] = lpos.std(axis=0)
-        rwidth[s,n,:] = lwidth.mean(axis=0)
-        rwrms[s,n,:] = lwidth.std(axis=0)
-        rsig[s,n] = lsig.mean(axis=0)
-        rsrms[s,n] = lsig.std(axis=0)
-        rllp[s,n] = lllp.mean(axis=0)
-        rlrms[s,n] = lllp.std(axis=0)
-        rgsig[s,n] = lgsig.mean(axis=0)
-        rgrms[s,n] = lgsig.std(axis=0)
+        rpos[s,n,:,:] = lpos.mean(axis=0)
+        rprms[s,n,:,:] = lpos.std(axis=0)
+        rwidth[s,n,:,:] = lwidth.mean(axis=0)
+        rwrms[s,n,:,:] = lwidth.std(axis=0)
+        rsig[s,n,:] = lsig.mean(axis=0)
+        rsrms[s,n,:] = lsig.std(axis=0)
+        rllp[s,n,:] = lllp.mean(axis=0)
+        rlrms[s,n,:] = lllp.std(axis=0)
+        rgsig[s,n,:] = lgsig.mean(axis=0)
+        rgrms[s,n,:] = lgsig.std(axis=0)
         
-        rpos1[s,n,:] = lpos1.mean(axis=0)
-        rprms1[s,n,:] = lpos1.std(axis=0)
-        rwidth1[s,n,:] = lwidth1.mean(axis=0)
-        rwrms1[s,n,:] = lwidth1.std(axis=0)
-        rsig1[s,n,:] = lsig1.mean(axis=0)
-        rsrms1[s,n,:] = lsig1.std(axis=0)
-        rllp1[s,n,:] = lllp1.mean(axis=0)
-        rlrms1[s,n,:] = lllp1.std(axis=0)
-        rgsig1[s,n,:] = lgsig1.mean(axis=0)
-        rgrms1[s,n,:] = lgsig1.std(axis=0)
+        rpos1[s,n,:,:] = lpos1.mean(axis=0)
+        rprms1[s,n,:,:] = lpos1.std(axis=0)
+        rwidth1[s,n,:,:] = lwidth1.mean(axis=0)
+        rwrms1[s,n,:,:] = lwidth1.std(axis=0)
+        rsig1[s,n,:,:] = lsig1.mean(axis=0)
+        rsrms1[s,n,:,:] = lsig1.std(axis=0)
+        rllp1[s,n,:,:] = lllp1.mean(axis=0)
+        rlrms1[s,n,:,:] = lllp1.std(axis=0)
+        rgsig1[s,n,:,:] = lgsig1.mean(axis=0)
+        rgrms1[s,n,:,:] = lgsig1.std(axis=0)
         
         # Free some memory before next iteration
         del lpos
@@ -304,20 +485,23 @@ for s in range(len(wp)):
         del lgsig1
     print('##################################')
 del bh_2d
+del bh_2d_cor
 del bh_1d1
 del bh_1d2
+del bh_1d_cor1
+del bh_1d_cor2
 
 ## Do all the plots for all signals
 
 # Loop over all positions/width and do plots
 for s in range(len(wp)):
-    ##Plots 2D
+    ##Plots 2Dnocorr
     # Reco position vs true Nsig
     F = plt.figure(figsize=(10,6))
     plt.errorbar(
         Nsig,
-        rpos[s,:,0],
-        yerr=rprms[s,:,0],
+        rpos[s,:,0,0],
+        yerr=rprms[s,:,0,0],
         fmt='ro',
         markersize=7,
         lw=2,
@@ -326,128 +510,268 @@ for s in range(len(wp)):
     plt.hlines(wp[s][0,0], Nsig[0], Nsig[-1], color='g', linestyle='dashed', lw=2, label='x and y true')
     plt.errorbar(
         Nsig,
-        rpos[s,:,1],
-        yerr=rprms[s,:,1],
+        rpos[s,:,0,1],
+        yerr=rprms[s,:,0,1],
         fmt='bx',
         markersize=10,
         lw=2,
         label='y reco'
     )
     plt.legend(fontsize='xx-large')
-    plt.xlabel('Nsig true', size='xx-large')
+    plt.xlabel('Number of signal events', size='xx-large')
     plt.ylabel('x or y position', size='xx-large')
     plt.xticks(fontsize='xx-large')
     plt.yticks(fontsize='xx-large')
-    plt.savefig(f'results/2D/pos[{wp[s][0,0]},{wp[s][0,1]}]_width[{wp[s][1,0]},{wp[s][1,1]}]_reco_pos.png', bbox_inches='tight')
+    plt.savefig(f'results/2Dnocorr/pos[{wp[s][0,0]},{wp[s][0,1]}]_width[{wp[s][1,0]},{wp[s][1,1]}]_reco_pos.png', bbox_inches='tight')
     plt.close(F)
     
     # Reco width vs true Nsig
     F = plt.figure(figsize=(10,6))
-    plt.errorbar(Nsig,rwidth[s,:,0], yerr=rwrms[s,:,0], fmt='ro', markersize=7, lw=2, label='x reco')
-    plt.errorbar(Nsig,rwidth[s,:,1], yerr=rwrms[s,:,1], fmt='bx', markersize=10, lw=2, label='y reco')
+    plt.errorbar(Nsig,rwidth[s,:,0,0], yerr=rwrms[s,:,0,0], fmt='ro', markersize=7, lw=2, label='x reco')
+    plt.errorbar(Nsig,rwidth[s,:,0,1], yerr=rwrms[s,:,0,1], fmt='bx', markersize=10, lw=2, label='y reco')
     plt.legend(fontsize='xx-large')
-    plt.xlabel('Nsig true', size='xx-large')
+    plt.xlabel('Number of signal events', size='xx-large')
     plt.ylabel('x or y width', size='xx-large')
     plt.xticks(fontsize='xx-large')
     plt.yticks(fontsize='xx-large')
-    plt.savefig(f'results/2D/pos[{wp[s][0,0]},{wp[s][0,1]}]_width[{wp[s][1,0]},{wp[s][1,1]}]_reco_width.png', bbox_inches='tight')
+    plt.savefig(f'results/2Dnocorr/pos[{wp[s][0,0]},{wp[s][0,1]}]_width[{wp[s][1,0]},{wp[s][1,1]}]_reco_width.png', bbox_inches='tight')
     plt.close(F)
     
     # Reco Nsig vs true Nsig
     F = plt.figure(figsize=(10,6))
-    plt.errorbar(Nsig, rsig[s,:], yerr=rsrms[s,:], fmt='ro', markersize=7, lw=2,label='reco')
+    plt.errorbar(Nsig, rsig[s,:,0], yerr=rsrms[s,:,0], fmt='ro', markersize=7, lw=2,label='reco')
     plt.plot(Nsig, Nsig, 'g--',lw=2, label='true')
     plt.legend(fontsize='xx-large')
-    plt.xlabel('Nsig true', size='xx-large')
-    plt.ylabel('Nsig reco', size='xx-large')
+    plt.xlabel('Number of signal events (true)', size='xx-large')
+    plt.ylabel('Evaluated number of signal events', size='xx-large')
     plt.xticks(fontsize='xx-large')
     plt.yticks(fontsize='xx-large')
-    plt.savefig(f'results/2D/pos[{wp[s][0,0]},{wp[s][0,1]}]_width[{wp[s][1,0]},{wp[s][1,1]}]_reco_Nsig.png', bbox_inches='tight')
+    plt.savefig(f'results/2Dnocorr/pos[{wp[s][0,0]},{wp[s][0,1]}]_width[{wp[s][1,0]},{wp[s][1,1]}]_reco_Nsig.png', bbox_inches='tight')
     plt.close(F)
     
     
     # Local negative log pvalue vs true Nsig
     F = plt.figure(figsize=(10,6))
-    plt.errorbar(Nsig, rllp[s,:], yerr=rlrms[s,:], fmt='ro', markersize=7, lw=2)
-    plt.xlabel('Nsig true', size='xx-large')
-    plt.ylabel('-log(local p-value)', size='xx-large')
+    plt.errorbar(Nsig, rllp[s,:,0], yerr=rlrms[s,:,0], fmt='ro', markersize=7, lw=2)
+    plt.xlabel('Number of signal events', size='xx-large')
+    plt.ylabel('Test statistic', size='xx-large')
     plt.xticks(fontsize='xx-large')
     plt.yticks(fontsize='xx-large')
-    plt.savefig(f'results/2D/pos[{wp[s][0,0]},{wp[s][0,1]}]_width[{wp[s][1,0]},{wp[s][1,1]}]_local_pval.png', bbox_inches='tight')
+    plt.savefig(f'results/2Dnocorr/pos[{wp[s][0,0]},{wp[s][0,1]}]_width[{wp[s][1,0]},{wp[s][1,1]}]_local_pval.png', bbox_inches='tight')
     plt.close(F)
     
     # Global significance vs true Nsig
     F = plt.figure(figsize=(10,6))
-    plt.errorbar(Nsig,rgsig[s,:], yerr=rgrms[s,:], fmt='ro', markersize=7, lw=2)
-    plt.xlabel('Nsig true', size='xx-large')
-    plt.ylabel('global significance', size='xx-large')
+    plt.errorbar(Nsig,rgsig[s,:,0], yerr=rgrms[s,:,0], fmt='ro', markersize=7, lw=2)
+    plt.xlabel('Number of signal events', size='xx-large')
+    plt.ylabel('Global significance', size='xx-large')
     plt.xticks(fontsize='xx-large')
     plt.yticks(fontsize='xx-large')
-    plt.savefig(f'results/2D/pos[{wp[s][0,0]},{wp[s][0,1]}]_width[{wp[s][1,0]},{wp[s][1,1]}]_global_sig.png', bbox_inches='tight')
+    plt.savefig(f'results/2Dnocorr/pos[{wp[s][0,0]},{wp[s][0,1]}]_width[{wp[s][1,0]},{wp[s][1,1]}]_global_sig.png', bbox_inches='tight')
     plt.close(F)
     
     
-    ##Plots 1D
+    ##Plots 2Dcorr
     # Reco position vs true Nsig
     F = plt.figure(figsize=(10,6))
-    plt.errorbar(Nsig, rpos1[s,:,0], yerr=rprms1[s,:,0], fmt='ro', markersize=7, lw=2, label='x reco')
-    plt.errorbar(Nsig, rpos1[s,:,1], yerr=rprms1[s,:,1], fmt='bx', markersize=10, lw=2, label='y reco')
+    plt.errorbar(
+        Nsig,
+        rpos[s,:,1,0],
+        yerr=rprms[s,:,1,0],
+        fmt='ro',
+        markersize=7,
+        lw=2,
+        label='x reco'
+    )
     plt.hlines(wp[s][0,0], Nsig[0], Nsig[-1], color='g', linestyle='dashed', lw=2, label='x and y true')
+    plt.errorbar(
+        Nsig,
+        rpos[s,:,1,1],
+        yerr=rprms[s,:,1,1],
+        fmt='bx',
+        markersize=10,
+        lw=2,
+        label='y reco'
+    )
     plt.legend(fontsize='xx-large')
-    plt.xlabel('Nsig true', size='xx-large')
+    plt.xlabel('Number of signal events', size='xx-large')
     plt.ylabel('x or y position', size='xx-large')
     plt.xticks(fontsize='xx-large')
     plt.yticks(fontsize='xx-large')
-    plt.savefig(f'results/1D/pos[{wp[s][0,0]},{wp[s][0,1]}]_width[{wp[s][1,0]},{wp[s][1,1]}]_reco_pos.png', bbox_inches='tight')
+    plt.savefig(f'results/2Dcorr/pos[{wp[s][0,0]},{wp[s][0,1]}]_width[{wp[s][1,0]},{wp[s][1,1]}]_reco_pos.png', bbox_inches='tight')
     plt.close(F)
     
     # Reco width vs true Nsig
     F = plt.figure(figsize=(10,6))
-    plt.errorbar(Nsig, rwidth1[s,:,0], yerr=rwrms1[s,:,0], fmt='ro', markersize=7, lw=2, label='x reco')
-    plt.errorbar(Nsig, rwidth1[s,:,1], yerr=rwrms1[s,:,1], fmt='bx', markersize=10, lw=2, label='y reco')
+    plt.errorbar(Nsig,rwidth[s,:,1,0], yerr=rwrms[s,:,1,0], fmt='ro', markersize=7, lw=2, label='x reco')
+    plt.errorbar(Nsig,rwidth[s,:,1,1], yerr=rwrms[s,:,1,1], fmt='bx', markersize=10, lw=2, label='y reco')
     plt.legend(fontsize='xx-large')
-    plt.xlabel('Nsig true', size='xx-large')
+    plt.xlabel('Number of signal events', size='xx-large')
     plt.ylabel('x or y width', size='xx-large')
     plt.xticks(fontsize='xx-large')
     plt.yticks(fontsize='xx-large')
-    plt.savefig(f'results/1D/pos[{wp[s][0,0]},{wp[s][0,1]}]_width[{wp[s][1,0]},{wp[s][1,1]}]_reco_width.png', bbox_inches='tight')
+    plt.savefig(f'results/2Dcorr/pos[{wp[s][0,0]},{wp[s][0,1]}]_width[{wp[s][1,0]},{wp[s][1,1]}]_reco_width.png', bbox_inches='tight')
     plt.close(F)
     
     # Reco Nsig vs true Nsig
     F = plt.figure(figsize=(10,6))
-    plt.errorbar(Nsig, rsig1[s,:,0], yerr=rsrms1[s,:,0], fmt='ro', markersize=7, lw=2, label='x reco')
-    plt.errorbar(Nsig, rsig1[s,:,1], yerr=rsrms1[s,:,1], fmt='bx', markersize=10, lw=2, label='y reco')
-    plt.plot(Nsig, Nsig, 'g--', lw=2, label='true')
+    plt.errorbar(Nsig, rsig[s,:,1], yerr=rsrms[s,:,1], fmt='ro', markersize=7, lw=2,label='reco')
+    plt.plot(Nsig, Nsig, 'g--',lw=2, label='true')
     plt.legend(fontsize='xx-large')
-    plt.xlabel('Nsig true', size='xx-large')
-    plt.ylabel('Nsig reco', size='xx-large')
+    plt.xlabel('Number of signal events (true)', size='xx-large')
+    plt.ylabel('Evaluated number of signal events', size='xx-large')
     plt.xticks(fontsize='xx-large')
     plt.yticks(fontsize='xx-large')
-    plt.savefig(f'results/1D/pos[{wp[s][0,0]},{wp[s][0,1]}]_width[{wp[s][1,0]},{wp[s][1,1]}]_reco_Nsig.png', bbox_inches='tight')
+    plt.savefig(f'results/2Dcorr/pos[{wp[s][0,0]},{wp[s][0,1]}]_width[{wp[s][1,0]},{wp[s][1,1]}]_reco_Nsig.png', bbox_inches='tight')
+    plt.close(F)
+    
+    
+    # Local negative log pvalue vs true Nsig
+    F = plt.figure(figsize=(10,6))
+    plt.errorbar(Nsig, rllp[s,:,1], yerr=rlrms[s,:,1], fmt='ro', markersize=7, lw=2)
+    plt.xlabel('Number of signal events', size='xx-large')
+    plt.ylabel('Test statistic', size='xx-large')
+    plt.xticks(fontsize='xx-large')
+    plt.yticks(fontsize='xx-large')
+    plt.savefig(f'results/2Dcorr/pos[{wp[s][0,0]},{wp[s][0,1]}]_width[{wp[s][1,0]},{wp[s][1,1]}]_local_pval.png', bbox_inches='tight')
+    plt.close(F)
+    
+    # Global significance vs true Nsig
+    F = plt.figure(figsize=(10,6))
+    plt.errorbar(Nsig,rgsig[s,:,1], yerr=rgrms[s,:,1], fmt='ro', markersize=7, lw=2)
+    plt.xlabel('Number of signal events', size='xx-large')
+    plt.ylabel('Global significance', size='xx-large')
+    plt.xticks(fontsize='xx-large')
+    plt.yticks(fontsize='xx-large')
+    plt.savefig(f'results/2Dcorr/pos[{wp[s][0,0]},{wp[s][0,1]}]_width[{wp[s][1,0]},{wp[s][1,1]}]_global_sig.png', bbox_inches='tight')
+    plt.close(F)
+    
+    ##Plots 1Dnocorr
+    # Reco position vs true Nsig
+    F = plt.figure(figsize=(10,6))
+    plt.errorbar(Nsig, rpos1[s,:,0,0], yerr=rprms1[s,:,0,0], fmt='ro', markersize=7, lw=2, label='x reco')
+    plt.errorbar(Nsig, rpos1[s,:,0,1], yerr=rprms1[s,:,0,1], fmt='bx', markersize=10, lw=2, label='y reco')
+    plt.hlines(wp[s][0,0], Nsig[0], Nsig[-1], color='g', linestyle='dashed', lw=2, label='x and y true')
+    plt.legend(fontsize='xx-large')
+    plt.xlabel('Number of signal events', size='xx-large')
+    plt.ylabel('x or y position', size='xx-large')
+    plt.xticks(fontsize='xx-large')
+    plt.yticks(fontsize='xx-large')
+    plt.savefig(f'results/1Dnocorr/pos[{wp[s][0,0]},{wp[s][0,1]}]_width[{wp[s][1,0]},{wp[s][1,1]}]_reco_pos.png', bbox_inches='tight')
+    plt.close(F)
+    
+    # Reco width vs true Nsig
+    F = plt.figure(figsize=(10,6))
+    plt.errorbar(Nsig, rwidth1[s,:,0,0], yerr=rwrms1[s,:,0,0], fmt='ro', markersize=7, lw=2, label='x reco')
+    plt.errorbar(Nsig, rwidth1[s,:,0,1], yerr=rwrms1[s,:,0,1], fmt='bx', markersize=10, lw=2, label='y reco')
+    plt.legend(fontsize='xx-large')
+    plt.xlabel('Number of signal events', size='xx-large')
+    plt.ylabel('x or y width', size='xx-large')
+    plt.xticks(fontsize='xx-large')
+    plt.yticks(fontsize='xx-large')
+    plt.savefig(f'results/1Dnocorr/pos[{wp[s][0,0]},{wp[s][0,1]}]_width[{wp[s][1,0]},{wp[s][1,1]}]_reco_width.png', bbox_inches='tight')
+    plt.close(F)
+    
+    # Reco Nsig vs true Nsig
+    F = plt.figure(figsize=(10,6))
+    plt.errorbar(Nsig, rsig1[s,:,0,0], yerr=rsrms1[s,:,0,0], fmt='ro', markersize=7, lw=2, label='x reco')
+    plt.errorbar(Nsig, rsig1[s,:,0,1], yerr=rsrms1[s,:,0,1], fmt='bx', markersize=10, lw=2, label='y reco')
+    plt.plot(Nsig, Nsig, 'g--', lw=2, label='true')
+    plt.legend(fontsize='xx-large')
+    plt.xlabel('Number of signal events (true)', size='xx-large')
+    plt.ylabel('Evaluated number of signal events', size='xx-large')
+    plt.xticks(fontsize='xx-large')
+    plt.yticks(fontsize='xx-large')
+    plt.savefig(f'results/1Dnocorr/pos[{wp[s][0,0]},{wp[s][0,1]}]_width[{wp[s][1,0]},{wp[s][1,1]}]_reco_Nsig.png', bbox_inches='tight')
     plt.close(F)
     
     # Local negative log p-value vs true Nsig
     F = plt.figure(figsize=(10,6))
-    plt.errorbar(Nsig ,rllp1[s,:,0], yerr=rlrms1[s,:,0], fmt='ro', markersize=7, lw=2, label='x')
-    plt.errorbar(Nsig, rllp1[s,:,1], yerr=rlrms1[s,:,1], fmt='bx', markersize=10, lw=2, label='y')
+    plt.errorbar(Nsig ,rllp1[s,:,0,0], yerr=rlrms1[s,:,0,0], fmt='ro', markersize=7, lw=2, label='x')
+    plt.errorbar(Nsig, rllp1[s,:,0,1], yerr=rlrms1[s,:,0,1], fmt='bx', markersize=10, lw=2, label='y')
+    plt.legend(fontsize='xx-large')
+    plt.xlabel('Number of signal events' ,size='xx-large')
+    plt.ylabel('Test statistic', size='xx-large')
+    plt.xticks(fontsize='xx-large')
+    plt.yticks(fontsize='xx-large')
+    plt.savefig(f'results/1Dnocorr/pos[{wp[s][0,0]},{wp[s][0,1]}]_width[{wp[s][1,0]},{wp[s][1,1]}]_local_pval.png', bbox_inches='tight')
+    plt.close(F)
+    
+    # Global significance vs true Nsig
+    F = plt.figure(figsize=(10,6))
+    plt.errorbar(Nsig, rgsig1[s,:,0,0], yerr=rgrms1[s,:,0,0], fmt='ro', markersize=7, lw=2, label='x')
+    plt.errorbar(Nsig, rgsig1[s,:,0,1], yerr=rgrms1[s,:,0,1], fmt='bx', markersize=10, lw=2, label='y')
+    plt.legend(fontsize='xx-large')
+    plt.xlabel('Number of signal events', size='xx-large')
+    plt.ylabel('Global significance', size='xx-large')
+    plt.xticks(fontsize='xx-large')
+    plt.yticks(fontsize='xx-large')
+    plt.savefig(f'results/1Dnocorr/pos[{wp[s][0,0]},{wp[s][0,1]}]_width[{wp[s][1,0]},{wp[s][1,1]}]_global_sig.png', bbox_inches='tight')
+    plt.close(F)
+    
+    ##Plots 1Dcorr
+    # Reco position vs true Nsig
+    F = plt.figure(figsize=(10,6))
+    plt.errorbar(Nsig, rpos1[s,:,1,0], yerr=rprms1[s,:,1,0], fmt='ro', markersize=7, lw=2, label='x reco')
+    plt.errorbar(Nsig, rpos1[s,:,1,1], yerr=rprms1[s,:,1,1], fmt='bx', markersize=10, lw=2, label='y reco')
+    plt.hlines(wp[s][0,0], Nsig[0], Nsig[-1], color='g', linestyle='dashed', lw=2, label='x and y true')
+    plt.legend(fontsize='xx-large')
+    plt.xlabel('Number of signal events', size='xx-large')
+    plt.ylabel('x or y position', size='xx-large')
+    plt.xticks(fontsize='xx-large')
+    plt.yticks(fontsize='xx-large')
+    plt.savefig(f'results/1Dcorr/pos[{wp[s][0,0]},{wp[s][0,1]}]_width[{wp[s][1,0]},{wp[s][1,1]}]_reco_pos.png', bbox_inches='tight')
+    plt.close(F)
+    
+    # Reco width vs true Nsig
+    F = plt.figure(figsize=(10,6))
+    plt.errorbar(Nsig, rwidth1[s,:,1,0], yerr=rwrms1[s,:,1,0], fmt='ro', markersize=7, lw=2, label='x reco')
+    plt.errorbar(Nsig, rwidth1[s,:,1,1], yerr=rwrms1[s,:,1,1], fmt='bx', markersize=10, lw=2, label='y reco')
+    plt.legend(fontsize='xx-large')
+    plt.xlabel('Number of signal events', size='xx-large')
+    plt.ylabel('x or y width', size='xx-large')
+    plt.xticks(fontsize='xx-large')
+    plt.yticks(fontsize='xx-large')
+    plt.savefig(f'results/1Dcorr/pos[{wp[s][0,0]},{wp[s][0,1]}]_width[{wp[s][1,0]},{wp[s][1,1]}]_reco_width.png', bbox_inches='tight')
+    plt.close(F)
+    
+    # Reco Nsig vs true Nsig
+    F = plt.figure(figsize=(10,6))
+    plt.errorbar(Nsig, rsig1[s,:,1,0], yerr=rsrms1[s,:,1,0], fmt='ro', markersize=7, lw=2, label='x reco')
+    plt.errorbar(Nsig, rsig1[s,:,1,1], yerr=rsrms1[s,:,1,1], fmt='bx', markersize=10, lw=2, label='y reco')
+    plt.plot(Nsig, Nsig, 'g--', lw=2, label='true')
+    plt.legend(fontsize='xx-large')
+    plt.xlabel('Number of signal events (true)', size='xx-large')
+    plt.ylabel('Evaluated number of signal events', size='xx-large')
+    plt.xticks(fontsize='xx-large')
+    plt.yticks(fontsize='xx-large')
+    plt.savefig(f'results/1Dcorr/pos[{wp[s][0,0]},{wp[s][0,1]}]_width[{wp[s][1,0]},{wp[s][1,1]}]_reco_Nsig.png', bbox_inches='tight')
+    plt.close(F)
+    
+    # Local negative log p-value vs true Nsig
+    F = plt.figure(figsize=(10,6))
+    plt.errorbar(Nsig ,rllp1[s,:,1,0], yerr=rlrms1[s,:,1,0], fmt='ro', markersize=7, lw=2, label='x')
+    plt.errorbar(Nsig, rllp1[s,:,1,1], yerr=rlrms1[s,:,1,1], fmt='bx', markersize=10, lw=2, label='y')
     plt.legend(fontsize='xx-large')
     plt.xlabel('Nsig true' ,size='xx-large')
     plt.ylabel('-ln(local p-value)', size='xx-large')
     plt.xticks(fontsize='xx-large')
     plt.yticks(fontsize='xx-large')
-    plt.savefig(f'results/1D/pos[{wp[s][0,0]},{wp[s][0,1]}]_width[{wp[s][1,0]},{wp[s][1,1]}]_local_pval.png', bbox_inches='tight')
+    plt.savefig(f'results/1Dcorr/pos[{wp[s][0,0]},{wp[s][0,1]}]_width[{wp[s][1,0]},{wp[s][1,1]}]_local_pval.png', bbox_inches='tight')
     plt.close(F)
     
     # Global significance vs true Nsig
     F = plt.figure(figsize=(10,6))
-    plt.errorbar(Nsig, rgsig1[s,:,0], yerr=rgrms1[s,:,0], fmt='ro', markersize=7, lw=2, label='x')
-    plt.errorbar(Nsig, rgsig1[s,:,1], yerr=rgrms1[s,:,1], fmt='bx', markersize=10, lw=2, label='y')
+    plt.errorbar(Nsig, rgsig1[s,:,1,0], yerr=rgrms1[s,:,1,0], fmt='ro', markersize=7, lw=2, label='x')
+    plt.errorbar(Nsig, rgsig1[s,:,1,1], yerr=rgrms1[s,:,1,1], fmt='bx', markersize=10, lw=2, label='y')
     plt.legend(fontsize='xx-large')
-    plt.xlabel('Nsig true', size='xx-large')
-    plt.ylabel('global significance', size='xx-large')
+    plt.xlabel('Number of signal events', size='xx-large')
+    plt.ylabel('Global significance', size='xx-large')
     plt.xticks(fontsize='xx-large')
     plt.yticks(fontsize='xx-large')
-    plt.savefig(f'results/1D/pos[{wp[s][0,0]},{wp[s][0,1]}]_width[{wp[s][1,0]},{wp[s][1,1]}]_global_sig.png', bbox_inches='tight')
+    plt.savefig(f'results/1Dcorr/pos[{wp[s][0,0]},{wp[s][0,1]}]_width[{wp[s][1,0]},{wp[s][1,1]}]_global_sig.png', bbox_inches='tight')
     plt.close(F)
+
+
 
 
