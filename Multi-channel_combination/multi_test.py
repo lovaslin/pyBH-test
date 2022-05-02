@@ -85,13 +85,13 @@ llp = np.empty((2, len(Nsig), 2)) # -ln(loc p-val)
 gsi = np.empty((2, len(Nsig), 2)) # Global sig
 
 # Create the results folders if needed
-safe_mkdir('stat')
-safe_mkdir('stat/glob_sig')
-safe_mkdir(f'stat/glob_sig/Nch{Nchan}')
+safe_mkdir('BHstat')
+safe_mkdir('BHstat/glob_sig')
+safe_mkdir(f'BHstat/glob_sig/Nch{Nchan}')
 names = ['multi-chan', 'sum']
 for n in names:
-    safe_mkdir('stat/' + n)
-    safe_mkdir('stat/' + n + f'/Nch{Nchan}')
+    safe_mkdir('BHstat/' + n)
+    safe_mkdir('BHstat/' + n + f'/Nch{Nchan}')
 
 # Loop over Nsig
 is_first = True
@@ -157,9 +157,9 @@ for s in range(len(Nsig)):
         lllp[0, i] = bh1.t_ar[0]
         lgsi[0, i] = bh1.significance
         
-        # Save the first stat plot
+        # Save the first BHstat plot
         if i == 0:
-            bh1.plot_stat(show_Pval=True, filename=f'stat/multi-chan/Nch{Nchan}/Nsig{Nsig[s][0]}+{Nsig[s][1]}.png')
+            bh1.plot_stat(show_Pval=True, filename=f'BHstat/multi-chan/Nch{Nchan}/Nsig{Nsig[s][0]}+{Nsig[s][1]}.png')
         
         # Run BH on channels sum
         data_sum = np.sum(data, axis=0)
@@ -180,9 +180,9 @@ for s in range(len(Nsig)):
         lllp[1, i] = bh2.t_ar[0]
         lgsi[1, i] = bh2.significance
         
-        # Save the first stat plot
+        # Save the first BHstat plot
         if i == 0:
-            bh2.plot_stat(show_Pval=True, filename=f'stat/sum/Nch{Nchan}/Nsig{Nsig[s][0]}+{Nsig[s][1]}.png')
+            bh2.plot_stat(show_Pval=True, filename=f'BHstat/sum/Nch{Nchan}/Nsig{Nsig[s][0]}+{Nsig[s][1]}.png')
         
         if is_first:
             is_first = False
@@ -195,7 +195,7 @@ for s in range(len(Nsig)):
     plt.xticks(fontsize='xx-large')
     plt.yticks(fontsize='xx-large')
     plt.xlabel('Global significance', size='xx-large')
-    plt.savefig(f'stat/glob_sig/Nch{Nchan}/Nsig{Nsig[s][0]}+{Nsig[s][1]}.png', bbox_inches='tight')
+    plt.savefig(f'BHstat/glob_sig/Nch{Nchan}/Nsig{Nsig[s][0]}+{Nsig[s][1]}.png', bbox_inches='tight')
     plt.close(F)
     
     # Compute mean/rms for this Nsig
@@ -235,7 +235,7 @@ plt.errorbar(
     markersize=7,
     lw=2,
     color='r',
-    label='multi-chan'
+    label='multi-channel'
 )
 plt.errorbar(
     Nsig,
@@ -245,12 +245,12 @@ plt.errorbar(
     markersize=10,
     lw=2,
     color='b',
-    label='sum'
+    label='single-channel'
 )
 plt.hlines(loc, Nsig[0], Nsig[-1], linestyles='dashed', colors='g', lw=2, label='true')
 plt.legend(fontsize='xx-large')
-plt.xlabel('Nsig true', size='xx-large')
-plt.ylabel('Reco pos' ,size='xx-large')
+plt.xlabel('Number of signal events', size='xx-large')
+plt.ylabel('Bump position' ,size='xx-large')
 plt.xticks(fontsize='xx-large')
 plt.yticks(fontsize='xx-large')
 plt.savefig(f'results/Nch{Nchan}/multi_reco_pos.png', bbox_inches='tight')
@@ -266,7 +266,7 @@ plt.errorbar(
     markersize=7,
     lw=2,
     color='r',
-    label='multi-chan'
+    label='multi-channel'
 )
 plt.errorbar(
     Nsig,
@@ -276,11 +276,11 @@ plt.errorbar(
     markersize=10,
     lw=2,
     color='b',
-    label='sum'
+    label='single-channel'
 )
 plt.legend(fontsize='xx-large')
-plt.xlabel('Nsig true', size='xx-large')
-plt.ylabel('Reco width', size='xx-large')
+plt.xlabel('Number of signal events', size='xx-large')
+plt.ylabel('Bump width', size='xx-large')
 plt.xticks(fontsize='xx-large')
 plt.yticks(fontsize='xx-large')
 plt.savefig(f'results/Nch{Nchan}/multi_reco_width.png', bbox_inches='tight')
@@ -296,7 +296,7 @@ plt.errorbar(
     markersize=7,
     lw=2,
     color='r',
-    label='multi-chan'
+    label='multi-channel'
 )
 plt.errorbar(
     Nsig,
@@ -306,12 +306,12 @@ plt.errorbar(
     markersize=10,
     lw=2,
     color='b',
-    label='sum'
+    label='single-channel'
 )
 plt.plot(Nsig, Nsig, 'g--', lw=2, label='true')
 plt.legend(fontsize='xx-large')
-plt.xlabel('Nsig true', size='xx-large')
-plt.ylabel('Reco Nsig', size='xx-large')
+plt.xlabel('Number of signal events (true)', size='xx-large')
+plt.ylabel('Evaluated number of signal events', size='xx-large')
 plt.xticks(fontsize='xx-large')
 plt.yticks(fontsize='xx-large')
 plt.savefig(f'results/Nch{Nchan}/multi_reco_Nsig.png', bbox_inches='tight')
@@ -327,7 +327,7 @@ plt.errorbar(
     markersize=7,
     lw=2,
     color='r',
-    label='multi-chan'
+    label='multi-channel'
 )
 plt.errorbar(
     Nsig,
@@ -337,11 +337,11 @@ plt.errorbar(
     markersize=10,
     lw=2,
     color='b',
-    label='sum'
+    label='single-channel'
 )
 plt.legend(fontsize='xx-large')
-plt.xlabel('Nsig true', size='xx-large')
-plt.ylabel('-ln(local p-value)', size='xx-large')
+plt.xlabel('Number of signal events', size='xx-large')
+plt.ylabel('Test statistic', size='xx-large')
 plt.xticks(fontsize='xx-large')
 plt.yticks(fontsize='xx-large')
 plt.savefig(f'results/Nch{Nchan}/multi_local_pval.png', bbox_inches='tight')
@@ -357,7 +357,7 @@ plt.errorbar(
     markersize=7,
     lw=2,
     color='r',
-    label='multi-chan'
+    label='multi-channel'
 )
 plt.errorbar(
     Nsig,
@@ -367,10 +367,10 @@ plt.errorbar(
     markersize=10,
     lw=2,
     color='b',
-    label='sum'
+    label='single-channel'
 )
 plt.legend(fontsize='xx-large')
-plt.xlabel('Nsig true', size='xx-large')
+plt.xlabel('Number of signal events', size='xx-large')
 plt.ylabel('Global significance', size='xx-large')
 plt.xticks(fontsize='xx-large')
 plt.yticks(fontsize='xx-large')
