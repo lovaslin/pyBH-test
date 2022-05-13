@@ -4,6 +4,7 @@
 
 import numpy as np
 import pyBumpHunter as BH
+import matplotlib.pyplot as plt
 
 
 ## Data Generation
@@ -42,9 +43,32 @@ bh1 = BH.BumpHunter1D(
     seed=666
 )
 
+# Run the ignal injection
 bh1.signal_inject(sig_hist, bkg_hist, is_hist=True)
 
-bh1.plot_inject(filename='injection_test.pdf')
+# Default pyBH plot
+bh1.plot_inject(filename='injection_test_raw.pdf')
+''''''
+# Custom plot
+x = np.arange(bh1.str_min, bh1.str_min + bh1.str_step * len(bh1.sigma_ar), step=bh1.str_step)
+y = np.array(bh1.sigma_ar)
+F = plt.figure(figsize=(12,8))
+plt.errorbar(
+    x,
+    y[:,0],
+    yerr=[y[:,1], y[:,2]],
+    marker='o',
+    lw=2,
+    label='median $\pm$ quartiles'
+)
+plt.legend(loc='upper left', fontsize='xx-large')
+plt.xlabel('Signal strength ($\mu$)', size='xx-large')
+plt.ylabel('Global significance ($\sigma$)', size='xx-large')
+plt.xticks(fontsize='xx-large')
+plt.yticks(fontsize='xx-large')
+plt.savefig('injection_test.pdf', bbox_inches='tight')
+plt.close(F)
+
 
 
 
