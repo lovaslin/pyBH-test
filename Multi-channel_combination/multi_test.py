@@ -29,7 +29,7 @@ print(f'Nchan = {Nchan}')
 
 # Data generation parameter
 Nbkg = [100_000 + int((ch+1) * 25_000) for ch in range(Nchan)]
-Nsig = [[i for ch in range(Nchan)] for i in range(0, 1300, 150)]
+Nsig = [[i for ch in range(Nchan)] for i in range(0, 1000, 150)]
 rng = [0, 40]
 loc = [8 for ch in range(Nchan)]
 scl = [1 + (ch+1) * 0.25 for ch in range(Nchan)]
@@ -82,7 +82,7 @@ pos = np.empty((2, len(Nsig), 2)) # Pos reco (real scale)
 wid = np.empty((2, len(Nsig), 2)) # Width reco (real scale)
 Nsi = np.empty((2, len(Nsig), 2)) # Nsig reco
 llp = np.empty((2, len(Nsig), 2)) # -ln(loc p-val)
-gsi = np.empty((2, len(Nsig), 2)) # Global sig
+gsi = np.empty((2, len(Nsig), 3)) # Global sig
 
 # Create the results folders if needed
 safe_mkdir('BHstat')
@@ -189,12 +189,12 @@ for s in range(len(Nsig)):
     
     # Plot global significance distributions
     F = plt.figure(figsize=(12, 8))
-    plt.title(f'Nsig = {Nsig[s][0]}+{Nsig[s][1]}', size='xx-large')
+    plt.title(f'Nsig = {Nsig[s][0]}+{Nsig[s][1]}', size=24)
     plt.hist([lgsi[0], lgsi[1]], bins=40, histtype='step', ls='--', lw=2, label=['comb', 'sum'])
-    plt.legend(fontsize='xx-large')
-    plt.xticks(fontsize='xx-large')
-    plt.yticks(fontsize='xx-large')
-    plt.xlabel('Global significance', size='xx-large')
+    plt.legend(fontsize=24)
+    plt.xticks(fontsize=24)
+    plt.yticks(fontsize=24)
+    plt.xlabel('Global significance', size=24)
     plt.savefig(f'BHstat/glob_sig/Nch{Nchan}/Nsig{Nsig[s][0]}+{Nsig[s][1]}.png', bbox_inches='tight')
     plt.close(F)
     
@@ -212,8 +212,9 @@ for s in range(len(Nsig)):
         llp[i, s, 0] = lllp[i].mean()
         llp[i, s, 1] = lllp[i].std()
         
-        gsi[i, s, 0] = lgsi[i].mean()
-        gsi[i, s, 1] = lgsi[i].std()
+        gsi[i, s, 0] = np.median(lgsi[i]) # Take median and quartiles for global significance
+        gsi[i, s, 1] = np.quantile(lgsi[i], 0.25)
+        gsi[i, s, 2] = np.quantile(lgsi[i], 0.75)
 
 # Make a combined Nsig numpy array
 Nsig = np.array(Nsig)
@@ -248,11 +249,11 @@ plt.errorbar(
     label='single-channel'
 )
 plt.hlines(loc, Nsig[0], Nsig[-1], linestyles='dashed', colors='g', lw=2, label='true')
-plt.legend(fontsize='xx-large')
-plt.xlabel('Number of signal events', size='xx-large')
-plt.ylabel('Bump position' ,size='xx-large')
-plt.xticks(fontsize='xx-large')
-plt.yticks(fontsize='xx-large')
+plt.legend(fontsize=24)
+plt.xlabel('Number of signal events', size=24)
+plt.ylabel('Bump position' ,size=24)
+plt.xticks(fontsize=24)
+plt.yticks(fontsize=24)
 plt.savefig(f'results/Nch{Nchan}/multi_reco_pos.png', bbox_inches='tight')
 plt.close(F)
 
@@ -278,11 +279,11 @@ plt.errorbar(
     color='b',
     label='single-channel'
 )
-plt.legend(fontsize='xx-large')
-plt.xlabel('Number of signal events', size='xx-large')
-plt.ylabel('Bump width', size='xx-large')
-plt.xticks(fontsize='xx-large')
-plt.yticks(fontsize='xx-large')
+plt.legend(fontsize=24)
+plt.xlabel('Number of signal events', size=24)
+plt.ylabel('Bump width', size=24)
+plt.xticks(fontsize=24)
+plt.yticks(fontsize=24)
 plt.savefig(f'results/Nch{Nchan}/multi_reco_width.png', bbox_inches='tight')
 plt.close(F)
 
@@ -309,11 +310,11 @@ plt.errorbar(
     label='single-channel'
 )
 plt.plot(Nsig, Nsig, 'g--', lw=2, label='true')
-plt.legend(fontsize='xx-large')
-plt.xlabel('Number of signal events (true)', size='xx-large')
-plt.ylabel('Evaluated number of signal events', size='xx-large')
-plt.xticks(fontsize='xx-large')
-plt.yticks(fontsize='xx-large')
+plt.legend(fontsize=24)
+plt.xlabel('Number of signal events (true)', size=24)
+plt.ylabel('Evaluated number of signal events', size=24)
+plt.xticks(fontsize=24)
+plt.yticks(fontsize=24)
 plt.savefig(f'results/Nch{Nchan}/multi_reco_Nsig.png', bbox_inches='tight')
 plt.close(F)
 
@@ -339,11 +340,11 @@ plt.errorbar(
     color='b',
     label='single-channel'
 )
-plt.legend(fontsize='xx-large')
-plt.xlabel('Number of signal events', size='xx-large')
-plt.ylabel('Test statistic', size='xx-large')
-plt.xticks(fontsize='xx-large')
-plt.yticks(fontsize='xx-large')
+plt.legend(fontsize=24)
+plt.xlabel('Number of signal events', size=24)
+plt.ylabel('Test statistic', size=24)
+plt.xticks(fontsize=24)
+plt.yticks(fontsize=24)
 plt.savefig(f'results/Nch{Nchan}/multi_local_pval.png', bbox_inches='tight')
 plt.close(F)
 
@@ -352,7 +353,7 @@ F = plt.figure(figsize = (10,6))
 plt.errorbar(
     Nsig,
     gsi[0, :, 0],
-    yerr = gsi[0, :, 1],
+    yerr = [gsi[0, :, 0]-gsi[0, :, 1], gsi[0, :, 2]-gsi[0, :, 0]],
     fmt='o',
     markersize=7,
     lw=2,
@@ -362,18 +363,18 @@ plt.errorbar(
 plt.errorbar(
     Nsig,
     gsi[1, :, 0],
-    yerr = gsi[1, :, 1],
+    yerr = [gsi[1, :, 0]-gsi[1, :, 1], gsi[1, :, 2]-gsi[1, :, 0]],
     fmt='x',
     markersize=10,
     lw=2,
     color='b',
     label='single-channel'
 )
-plt.legend(fontsize='xx-large')
-plt.xlabel('Number of signal events', size='xx-large')
-plt.ylabel('Global significance', size='xx-large')
-plt.xticks(fontsize='xx-large')
-plt.yticks(fontsize='xx-large')
+plt.legend(fontsize=24)
+plt.xlabel('Number of signal events', size=24)
+plt.ylabel('Global significance', size=24)
+plt.xticks(fontsize=24)
+plt.yticks(fontsize=24)
 plt.savefig(f'results/Nch{Nchan}/multi_global_sig.png', bbox_inches='tight')
 plt.close(F)
 
@@ -391,10 +392,10 @@ plt.plot(
     color='r',
 )
 plt.hlines(1, Nsig[0], Nsig[-1], linestyles='dashed', colors='g', lw=2)
-plt.xlabel('Nsig true', size='xx-large')
-plt.ylabel('Mean pos ratio (multi/sum)' ,size='xx-large')
-plt.xticks(fontsize='xx-large')
-plt.yticks(fontsize='xx-large')
+plt.xlabel('Nsig true', size=24)
+plt.ylabel('Mean pos ratio (multi/sum)' ,size=24)
+plt.xticks(fontsize=24)
+plt.yticks(fontsize=24)
 plt.savefig(f'results/Nch{Nchan}/multi_reco_pos_rat.png', bbox_inches='tight')
 plt.close(F)
 
@@ -409,10 +410,10 @@ plt.plot(
     color='r',
 )
 plt.hlines(1, Nsig[0], Nsig[-1], linestyles='dashed', colors='g', lw=2)
-plt.xlabel('Nsig true', size='xx-large')
-plt.ylabel('Mean width ratio (multi/sum)', size='xx-large')
-plt.xticks(fontsize='xx-large')
-plt.yticks(fontsize='xx-large')
+plt.xlabel('Nsig true', size=24)
+plt.ylabel('Mean width ratio (multi/sum)', size=24)
+plt.xticks(fontsize=24)
+plt.yticks(fontsize=24)
 plt.savefig(f'results/Nch{Nchan}/multi_reco_width_rat.png', bbox_inches='tight')
 plt.close(F)
 
@@ -427,10 +428,10 @@ plt.plot(
     color='r',
 )
 plt.hlines(1, Nsig[0], Nsig[-1], linestyles='dashed', colors='g', lw=2)
-plt.xlabel('Nsig true', size='xx-large')
-plt.ylabel('Mean Nsig ratio (multi/sum)', size='xx-large')
-plt.xticks(fontsize='xx-large')
-plt.yticks(fontsize='xx-large')
+plt.xlabel('Nsig true', size=24)
+plt.ylabel('Mean Nsig ratio (multi/sum)', size=24)
+plt.xticks(fontsize=24)
+plt.yticks(fontsize=24)
 plt.savefig(f'results/Nch{Nchan}/multi_reco_Nsig_rat.png', bbox_inches='tight')
 plt.close(F)
 
@@ -445,10 +446,10 @@ plt.plot(
     color='r',
 )
 plt.hlines(1, Nsig[0], Nsig[-1], linestyles='dashed', colors='g', lw=2)
-plt.xlabel('Nsig true', size='xx-large')
-plt.ylabel('Mean test statistic ratio (multi/sum)', size='xx-large')
-plt.xticks(fontsize='xx-large')
-plt.yticks(fontsize='xx-large')
+plt.xlabel('Nsig true', size=24)
+plt.ylabel('Mean test statistic ratio (multi/sum)', size=24)
+plt.xticks(fontsize=24)
+plt.yticks(fontsize=24)
 plt.savefig(f'results/Nch{Nchan}/multi_local_pval_rat.png', bbox_inches='tight')
 plt.close(F)
 
@@ -463,10 +464,10 @@ plt.plot(
     color='r',
 )
 plt.hlines(1, Nsig[0], Nsig[-1], linestyles='dashed', colors='g', lw=2)
-plt.xlabel('Nsig true', size='xx-large')
-plt.ylabel('Mean global significance ratio (multi/sum)', size='xx-large')
-plt.xticks(fontsize='xx-large')
-plt.yticks(fontsize='xx-large')
+plt.xlabel('Nsig true', size=24)
+plt.ylabel('Mean global significance ratio (multi/sum)', size=24)
+plt.xticks(fontsize=24)
+plt.yticks(fontsize=24)
 plt.savefig(f'results/Nch{Nchan}/multi_global_sig_rat.png', bbox_inches='tight')
 plt.close(F)
 
