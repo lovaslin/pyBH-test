@@ -233,7 +233,7 @@ plt.errorbar(
     pos[0, :, 0],
     yerr = pos[0, :, 1],
     fmt='o',
-    markersize=7,
+    markersize=12,
     lw=2,
     color='r',
     label='multi-channel'
@@ -243,7 +243,7 @@ plt.errorbar(
     pos[1, :, 0],
     yerr = pos[1, :, 1],
     fmt='x',
-    markersize=10,
+    markersize=15,
     lw=2,
     color='b',
     label='single-channel'
@@ -264,7 +264,7 @@ plt.errorbar(
     wid[0, :, 0],
     yerr = wid[0, :, 1],
     fmt='o',
-    markersize=7,
+    markersize=12,
     lw=2,
     color='r',
     label='multi-channel'
@@ -274,7 +274,7 @@ plt.errorbar(
     wid[1, :, 0],
     yerr = wid[1, :, 1],
     fmt='x',
-    markersize=10,
+    markersize=15,
     lw=2,
     color='b',
     label='single-channel'
@@ -294,7 +294,7 @@ plt.errorbar(
     Nsi[0, :, 0],
     yerr = Nsi[0, :, 1],
     fmt='o',
-    markersize=7,
+    markersize=12,
     lw=2,
     color='r',
     label='multi-channel'
@@ -304,7 +304,7 @@ plt.errorbar(
     Nsi[1, :, 0],
     yerr = Nsi[1, :, 1],
     fmt='x',
-    markersize=10,
+    markersize=15,
     lw=2,
     color='b',
     label='single-channel'
@@ -325,7 +325,7 @@ plt.errorbar(
     llp[0, :, 0],
     yerr = llp[0, :, 1],
     fmt='o',
-    markersize=7,
+    markersize=12,
     lw=2,
     color='r',
     label='multi-channel'
@@ -335,7 +335,7 @@ plt.errorbar(
     llp[1, :, 0],
     yerr = llp[1, :, 1],
     fmt='x',
-    markersize=10,
+    markersize=15,
     lw=2,
     color='b',
     label='single-channel'
@@ -355,7 +355,7 @@ plt.errorbar(
     gsi[0, :, 0],
     yerr = [gsi[0, :, 0]-gsi[0, :, 1], gsi[0, :, 2]-gsi[0, :, 0]],
     fmt='o',
-    markersize=7,
+    markersize=12,
     lw=2,
     color='r',
     label='multi-channel'
@@ -365,7 +365,7 @@ plt.errorbar(
     gsi[1, :, 0],
     yerr = [gsi[1, :, 0]-gsi[1, :, 1], gsi[1, :, 2]-gsi[1, :, 0]],
     fmt='x',
-    markersize=10,
+    markersize=15,
     lw=2,
     color='b',
     label='single-channel'
@@ -387,7 +387,7 @@ plt.plot(
     Nsig,
     pos[0, :, 0] / pos[1, :, 0],
     'o',
-    markersize=7,
+    markersize=12,
     lw=2,
     color='r',
 )
@@ -405,7 +405,7 @@ plt.plot(
     Nsig,
     wid[0, :, 0] / wid[1, :, 0],
     'o',
-    markersize=7,
+    markersize=12,
     lw=2,
     color='r',
 )
@@ -423,7 +423,7 @@ plt.plot(
     Nsig,
     Nsi[0, :, 0] / Nsi[1, :, 0],
     'o',
-    markersize=7,
+    markersize=12,
     lw=2,
     color='r',
 )
@@ -441,7 +441,7 @@ plt.plot(
     Nsig,
     llp[0, :, 0] / llp[1, :, 0],
     'o',
-    markersize=7,
+    markersize=12,
     lw=2,
     color='r',
 )
@@ -459,7 +459,7 @@ plt.plot(
     Nsig,
     gsi[0, :, 0] / gsi[1, :, 0],
     'o',
-    markersize=7,
+    markersize=12,
     lw=2,
     color='r',
 )

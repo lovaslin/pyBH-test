@@ -69,7 +69,7 @@ print(f'signal pos from {pos[0]} to {pos[-1]}')
 print(f'signal width from {width[0]} to {width[-1]}')
 
 # Choose the number of signal event
-Nsig = np.arange(0, 1500, 100)
+Nsig = np.arange(0, 1300, 100)
 print(f'number of signals event : {Nsig} ({100 * Nsig / bkg.shape[0]}%)')
 print(f'total number of signal to test : {len(wp) * Nsig.size}')
 
@@ -506,7 +506,7 @@ for s in range(len(wp)):
         rpos[s,:,0,0],
         yerr=rprms[s,:,0,0],
         fmt='ro',
-        markersize=7,
+        markersize=12,
         lw=2,
         label='x reco'
     )
@@ -516,7 +516,7 @@ for s in range(len(wp)):
         rpos[s,:,0,1],
         yerr=rprms[s,:,0,1],
         fmt='bx',
-        markersize=10,
+        markersize=15,
         lw=2,
         label='y reco'
     )
@@ -530,8 +530,8 @@ for s in range(len(wp)):
     
     # Reco width vs true Nsig
     F = plt.figure(figsize=(10,6))
-    plt.errorbar(Nsig,rwidth[s,:,0,0], yerr=rwrms[s,:,0,0], fmt='ro', markersize=7, lw=2, label='x reco')
-    plt.errorbar(Nsig,rwidth[s,:,0,1], yerr=rwrms[s,:,0,1], fmt='bx', markersize=10, lw=2, label='y reco')
+    plt.errorbar(Nsig,rwidth[s,:,0,0], yerr=rwrms[s,:,0,0], fmt='ro', markersize=12, lw=2, label='x reco')
+    plt.errorbar(Nsig,rwidth[s,:,0,1], yerr=rwrms[s,:,0,1], fmt='bx', markersize=15, lw=2, label='y reco')
     plt.legend(fontsize=24)
     plt.xlabel('Number of signal events', size=24)
     plt.ylabel('x or y width', size=24)
@@ -542,7 +542,7 @@ for s in range(len(wp)):
     
     # Reco Nsig vs true Nsig
     F = plt.figure(figsize=(10,6))
-    plt.errorbar(Nsig, rsig[s,:,0], yerr=rsrms[s,:,0], fmt='ro', markersize=7, lw=2,label='reco')
+    plt.errorbar(Nsig, rsig[s,:,0], yerr=rsrms[s,:,0], fmt='ro', markersize=12, lw=2,label='reco')
     plt.plot(Nsig, Nsig, 'g--',lw=2, label='true')
     plt.legend(fontsize=24)
     plt.xlabel('Number of signal events (true)', size=24)
@@ -555,7 +555,7 @@ for s in range(len(wp)):
     
     # Local negative log pvalue vs true Nsig
     F = plt.figure(figsize=(10,6))
-    plt.errorbar(Nsig, rllp[s,:,0], yerr=rlrms[s,:,0], fmt='ro', markersize=7, lw=2)
+    plt.errorbar(Nsig, rllp[s,:,0], yerr=rlrms[s,:,0], fmt='ro', markersize=12, lw=2)
     plt.xlabel('Number of signal events', size=24)
     plt.ylabel('Test statistic', size=24)
     plt.xticks(fontsize=24)
@@ -570,7 +570,7 @@ for s in range(len(wp)):
         rgsig[s,:,0],
         yerr=[rgsig[s,:,0] - rgrms[s,:,0,0], rgrms[s,:,0,1] - rgsig[s,:,0]],
         fmt='ro',
-        markersize=7,
+        markersize=12,
         lw=2
     )
     plt.xlabel('Number of signal events', size=24)
@@ -589,7 +589,7 @@ for s in range(len(wp)):
         rpos[s,:,1,0],
         yerr=rprms[s,:,1,0],
         fmt='ro',
-        markersize=7,
+        markersize=12,
         lw=2,
         label='x reco'
     )
@@ -599,7 +599,7 @@ for s in range(len(wp)):
         rpos[s,:,1,1],
         yerr=rprms[s,:,1,1],
         fmt='bx',
-        markersize=10,
+        markersize=15,
         lw=2,
         label='y reco'
     )
@@ -613,8 +613,8 @@ for s in range(len(wp)):
     
     # Reco width vs true Nsig
     F = plt.figure(figsize=(10,6))
-    plt.errorbar(Nsig,rwidth[s,:,1,0], yerr=rwrms[s,:,1,0], fmt='ro', markersize=7, lw=2, label='x reco')
-    plt.errorbar(Nsig,rwidth[s,:,1,1], yerr=rwrms[s,:,1,1], fmt='bx', markersize=10, lw=2, label='y reco')
+    plt.errorbar(Nsig,rwidth[s,:,1,0], yerr=rwrms[s,:,1,0], fmt='ro', markersize=12, lw=2, label='x reco')
+    plt.errorbar(Nsig,rwidth[s,:,1,1], yerr=rwrms[s,:,1,1], fmt='bx', markersize=15, lw=2, label='y reco')
     plt.legend(fontsize=24)
     plt.xlabel('Number of signal events', size=24)
     plt.ylabel('x or y width', size=24)
@@ -625,7 +625,7 @@ for s in range(len(wp)):
     
     # Reco Nsig vs true Nsig
     F = plt.figure(figsize=(10,6))
-    plt.errorbar(Nsig, rsig[s,:,1], yerr=rsrms[s,:,1], fmt='ro', markersize=7, lw=2,label='reco')
+    plt.errorbar(Nsig, rsig[s,:,1], yerr=rsrms[s,:,1], fmt='ro', markersize=12, lw=2,label='reco')
     plt.plot(Nsig, Nsig, 'g--',lw=2, label='true')
     plt.legend(fontsize=24)
     plt.xlabel('Number of signal events (true)', size=24)
@@ -638,7 +638,7 @@ for s in range(len(wp)):
     
     # Local negative log pvalue vs true Nsig
     F = plt.figure(figsize=(10,6))
-    plt.errorbar(Nsig, rllp[s,:,1], yerr=rlrms[s,:,1], fmt='ro', markersize=7, lw=2)
+    plt.errorbar(Nsig, rllp[s,:,1], yerr=rlrms[s,:,1], fmt='ro', markersize=12, lw=2)
     plt.xlabel('Number of signal events', size=24)
     plt.ylabel('Test statistic', size=24)
     plt.xticks(fontsize=24)
@@ -653,7 +653,7 @@ for s in range(len(wp)):
         rgsig[s,:,1],
         yerr=[rgsig[s,:,1] - rgrms[s,:,1,0], rgrms[s,:,1,1] - rgsig[s,:,1]],
         fmt='ro',
-        markersize=7,
+        markersize=12,
         lw=2
     )
     plt.xlabel('Number of signal events', size=24)
@@ -666,8 +666,8 @@ for s in range(len(wp)):
     ##Plots 1Dnocorr
     # Reco position vs true Nsig
     F = plt.figure(figsize=(10,6))
-    plt.errorbar(Nsig, rpos1[s,:,0,0], yerr=rprms1[s,:,0,0], fmt='ro', markersize=7, lw=2, label='x reco')
-    plt.errorbar(Nsig, rpos1[s,:,0,1], yerr=rprms1[s,:,0,1], fmt='bx', markersize=10, lw=2, label='y reco')
+    plt.errorbar(Nsig, rpos1[s,:,0,0], yerr=rprms1[s,:,0,0], fmt='ro', markersize=12, lw=2, label='x reco')
+    plt.errorbar(Nsig, rpos1[s,:,0,1], yerr=rprms1[s,:,0,1], fmt='bx', markersize=15, lw=2, label='y reco')
     plt.hlines(wp[s][0,0], Nsig[0], Nsig[-1], color='g', linestyle='dashed', lw=2, label='x and y true')
     plt.legend(fontsize=24)
     plt.xlabel('Number of signal events', size=24)
@@ -679,8 +679,8 @@ for s in range(len(wp)):
     
     # Reco width vs true Nsig
     F = plt.figure(figsize=(10,6))
-    plt.errorbar(Nsig, rwidth1[s,:,0,0], yerr=rwrms1[s,:,0,0], fmt='ro', markersize=7, lw=2, label='x reco')
-    plt.errorbar(Nsig, rwidth1[s,:,0,1], yerr=rwrms1[s,:,0,1], fmt='bx', markersize=10, lw=2, label='y reco')
+    plt.errorbar(Nsig, rwidth1[s,:,0,0], yerr=rwrms1[s,:,0,0], fmt='ro', markersize=12, lw=2, label='x reco')
+    plt.errorbar(Nsig, rwidth1[s,:,0,1], yerr=rwrms1[s,:,0,1], fmt='bx', markersize=15, lw=2, label='y reco')
     plt.legend(fontsize=24)
     plt.xlabel('Number of signal events', size=24)
     plt.ylabel('x or y width', size=24)
@@ -691,8 +691,8 @@ for s in range(len(wp)):
     
     # Reco Nsig vs true Nsig
     F = plt.figure(figsize=(10,6))
-    plt.errorbar(Nsig, rsig1[s,:,0,0], yerr=rsrms1[s,:,0,0], fmt='ro', markersize=7, lw=2, label='x reco')
-    plt.errorbar(Nsig, rsig1[s,:,0,1], yerr=rsrms1[s,:,0,1], fmt='bx', markersize=10, lw=2, label='y reco')
+    plt.errorbar(Nsig, rsig1[s,:,0,0], yerr=rsrms1[s,:,0,0], fmt='ro', markersize=12, lw=2, label='x reco')
+    plt.errorbar(Nsig, rsig1[s,:,0,1], yerr=rsrms1[s,:,0,1], fmt='bx', markersize=15, lw=2, label='y reco')
     plt.plot(Nsig, Nsig, 'g--', lw=2, label='true')
     plt.legend(fontsize=24)
     plt.xlabel('Number of signal events (true)', size=24)
@@ -704,8 +704,8 @@ for s in range(len(wp)):
     
     # Local negative log p-value vs true Nsig
     F = plt.figure(figsize=(10,6))
-    plt.errorbar(Nsig ,rllp1[s,:,0,0], yerr=rlrms1[s,:,0,0], fmt='ro', markersize=7, lw=2, label='x')
-    plt.errorbar(Nsig, rllp1[s,:,0,1], yerr=rlrms1[s,:,0,1], fmt='bx', markersize=10, lw=2, label='y')
+    plt.errorbar(Nsig ,rllp1[s,:,0,0], yerr=rlrms1[s,:,0,0], fmt='ro', markersize=12, lw=2, label='x')
+    plt.errorbar(Nsig, rllp1[s,:,0,1], yerr=rlrms1[s,:,0,1], fmt='bx', markersize=15, lw=2, label='y')
     plt.legend(fontsize=24)
     plt.xlabel('Number of signal events' ,size=24)
     plt.ylabel('Test statistic', size=24)
@@ -721,7 +721,7 @@ for s in range(len(wp)):
         rgsig1[s,:,0,0],
         yerr=[rgsig1[s,:,0,0] - rgrms1[s,:,0,0,0], rgrms1[s,:,0,0,1] - rgsig1[s,:,0,0]],
         fmt='ro',
-        markersize=7,
+        markersize=12,
         lw=2,
         label='x'
     )
@@ -730,7 +730,7 @@ for s in range(len(wp)):
         rgsig1[s,:,0,1],
         yerr=[rgsig1[s,:,0,1] - rgrms1[s,:,0,1,0], rgrms1[s,:,0,1,1] - rgsig1[s,:,0,1]],
         fmt='bx',
-        markersize=10,
+        markersize=15,
         lw=2,
         label='y'
     )
@@ -745,8 +745,8 @@ for s in range(len(wp)):
     ##Plots 1Dcorr
     # Reco position vs true Nsig
     F = plt.figure(figsize=(10,6))
-    plt.errorbar(Nsig, rpos1[s,:,1,0], yerr=rprms1[s,:,1,0], fmt='ro', markersize=7, lw=2, label='x reco')
-    plt.errorbar(Nsig, rpos1[s,:,1,1], yerr=rprms1[s,:,1,1], fmt='bx', markersize=10, lw=2, label='y reco')
+    plt.errorbar(Nsig, rpos1[s,:,1,0], yerr=rprms1[s,:,1,0], fmt='ro', markersize=12, lw=2, label='x reco')
+    plt.errorbar(Nsig, rpos1[s,:,1,1], yerr=rprms1[s,:,1,1], fmt='bx', markersize=15, lw=2, label='y reco')
     plt.hlines(wp[s][0,0], Nsig[0], Nsig[-1], color='g', linestyle='dashed', lw=2, label='x and y true')
     plt.legend(fontsize=24)
     plt.xlabel('Number of signal events', size=24)
@@ -758,8 +758,8 @@ for s in range(len(wp)):
     
     # Reco width vs true Nsig
     F = plt.figure(figsize=(10,6))
-    plt.errorbar(Nsig, rwidth1[s,:,1,0], yerr=rwrms1[s,:,1,0], fmt='ro', markersize=7, lw=2, label='x reco')
-    plt.errorbar(Nsig, rwidth1[s,:,1,1], yerr=rwrms1[s,:,1,1], fmt='bx', markersize=10, lw=2, label='y reco')
+    plt.errorbar(Nsig, rwidth1[s,:,1,0], yerr=rwrms1[s,:,1,0], fmt='ro', markersize=12, lw=2, label='x reco')
+    plt.errorbar(Nsig, rwidth1[s,:,1,1], yerr=rwrms1[s,:,1,1], fmt='bx', markersize=15, lw=2, label='y reco')
     plt.legend(fontsize=24)
     plt.xlabel('Number of signal events', size=24)
     plt.ylabel('x or y width', size=24)
@@ -770,8 +770,8 @@ for s in range(len(wp)):
     
     # Reco Nsig vs true Nsig
     F = plt.figure(figsize=(10,6))
-    plt.errorbar(Nsig, rsig1[s,:,1,0], yerr=rsrms1[s,:,1,0], fmt='ro', markersize=7, lw=2, label='x reco')
-    plt.errorbar(Nsig, rsig1[s,:,1,1], yerr=rsrms1[s,:,1,1], fmt='bx', markersize=10, lw=2, label='y reco')
+    plt.errorbar(Nsig, rsig1[s,:,1,0], yerr=rsrms1[s,:,1,0], fmt='ro', markersize=12, lw=2, label='x reco')
+    plt.errorbar(Nsig, rsig1[s,:,1,1], yerr=rsrms1[s,:,1,1], fmt='bx', markersize=15, lw=2, label='y reco')
     plt.plot(Nsig, Nsig, 'g--', lw=2, label='true')
     plt.legend(fontsize=24)
     plt.xlabel('Number of signal events (true)', size=24)
@@ -783,8 +783,8 @@ for s in range(len(wp)):
     
     # Local negative log p-value vs true Nsig
     F = plt.figure(figsize=(10,6))
-    plt.errorbar(Nsig ,rllp1[s,:,1,0], yerr=rlrms1[s,:,1,0], fmt='ro', markersize=7, lw=2, label='x')
-    plt.errorbar(Nsig, rllp1[s,:,1,1], yerr=rlrms1[s,:,1,1], fmt='bx', markersize=10, lw=2, label='y')
+    plt.errorbar(Nsig ,rllp1[s,:,1,0], yerr=rlrms1[s,:,1,0], fmt='ro', markersize=12, lw=2, label='x')
+    plt.errorbar(Nsig, rllp1[s,:,1,1], yerr=rlrms1[s,:,1,1], fmt='bx', markersize=15, lw=2, label='y')
     plt.legend(fontsize=24)
     plt.xlabel('Nsig true' ,size=24)
     plt.ylabel('-ln(local p-value)', size=24)
@@ -800,7 +800,7 @@ for s in range(len(wp)):
         rgsig1[s,:,1,0],
         yerr=[rgsig1[s,:,1,0] - rgrms1[s,:,1,0,0], rgrms1[s,:,1,0,1] - rgsig1[s,:,1,0]],
         fmt='ro',
-        markersize=7,
+        markersize=12,
         lw=2,
         label='x'
     )
@@ -809,7 +809,7 @@ for s in range(len(wp)):
         rgsig1[s,:,1,1],
         yerr=[rgsig1[s,:,1,1] - rgrms1[s,:,1,1,0], rgrms1[s,:,1,1,1] - rgsig1[s,:,1,1]],
         fmt='bx',
-        markersize=10,
+        markersize=15,
         lw=2,
         label='y'
     )

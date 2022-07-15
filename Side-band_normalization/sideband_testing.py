@@ -228,9 +228,9 @@ safe_mkdir('results/')
 
 # Reco position vs true Nsig
 F = plt.figure(figsize=(10,6))
-plt.errorbar(Nsig, rpos[:,0], yerr=rprms[:,0], fmt='ro', markersize=7, lw=2, label='excluded width = 0')
-plt.errorbar(Nsig, rpos[:,1], yerr=rprms[:,1], fmt='bx', markersize=10 ,lw=2, label='excluded width = 5')
-plt.errorbar(Nsig, rpos[:,2], yerr=rprms[:,2], fmt='gd', markersize=7 ,lw=2, label='no normalization')
+plt.errorbar(Nsig, rpos[:,0], yerr=rprms[:,0], fmt='ro', markersize=12, lw=2, label='excluded width = 0')
+plt.errorbar(Nsig, rpos[:,1], yerr=rprms[:,1], fmt='bx', markersize=15 ,lw=2, label='excluded width = 5')
+plt.errorbar(Nsig, rpos[:,2], yerr=rprms[:,2], fmt='gd', markersize=12 ,lw=2, label='no side-band')
 plt.hlines(pos, Nsig[0], Nsig[-1], color='g', linestyle='dashed', lw=2, label='true')
 plt.legend(fontsize=24)
 plt.xlabel('Number of signal events', size=24)
@@ -242,9 +242,9 @@ plt.close(F)
 
 # Reco width vs true Nsig
 F = plt.figure(figsize=(10,6))
-plt.errorbar(Nsig, rwidth[:,0], yerr=rwrms[:,0], fmt='ro', markersize=7, lw=2, label='excluded width = 0')
-plt.errorbar(Nsig, rwidth[:,1], yerr=rwrms[:,1], fmt='bx', markersize=10, lw=2, label='excluded width = 5')
-plt.errorbar(Nsig, rwidth[:,2], yerr=rwrms[:,2], fmt='gd', markersize=7, lw=2, label='no normalization')
+plt.errorbar(Nsig, rwidth[:,0], yerr=rwrms[:,0], fmt='ro', markersize=12, lw=2, label='excluded width = 0')
+plt.errorbar(Nsig, rwidth[:,1], yerr=rwrms[:,1], fmt='bx', markersize=15, lw=2, label='excluded width = 5')
+plt.errorbar(Nsig, rwidth[:,2], yerr=rwrms[:,2], fmt='gd', markersize=12, lw=2, label='no side-band')
 plt.legend(fontsize=24)
 plt.xlabel('Number of signal events', size=24)
 plt.ylabel('Bump width', size=24)
@@ -255,9 +255,9 @@ plt.close(F)
 
 # Reco Nsig vs true Nsig
 F = plt.figure(figsize=(10,6))
-plt.errorbar(Nsig, rsig[:,0], yerr=rsrms[:,0], fmt='ro', markersize=7, lw=2, label='excluded width = 0')
-plt.errorbar(Nsig, rsig[:,1], yerr=rsrms[:,1], fmt='bx', markersize=10, lw=2, label='excluded width = 5')
-plt.errorbar(Nsig, rsig[:,2], yerr=rsrms[:,2], fmt='gd', markersize=7, lw=2, label='no normalization')
+plt.errorbar(Nsig, rsig[:,0], yerr=rsrms[:,0], fmt='ro', markersize=12, lw=2, label='excluded width = 0')
+plt.errorbar(Nsig, rsig[:,1], yerr=rsrms[:,1], fmt='bx', markersize=15, lw=2, label='excluded width = 5')
+plt.errorbar(Nsig, rsig[:,2], yerr=rsrms[:,2], fmt='gd', markersize=12, lw=2, label='no side-band')
 plt.plot(Nsig, Nsig, 'g--', lw=2, label='true')
 plt.legend(fontsize=24)
 plt.xlabel('Number of signal events (true)', size=24)
@@ -269,9 +269,9 @@ plt.close(F)
 
 # Local negative log p-value vs true Nsig
 F = plt.figure(figsize=(10,6))
-plt.errorbar(Nsig, rllp[:,0], yerr=rlrms[:,0], fmt='ro', markersize=7, lw=2, label='excluded width = 0')
-plt.errorbar(Nsig, rllp[:,1], yerr=rlrms[:,1], fmt='bx', markersize=10, lw=2, label='excluded width = 5')
-plt.errorbar(Nsig, rllp[:,2], yerr=rlrms[:,2], fmt='gd', markersize=7, lw=2, label='no normalization')
+plt.errorbar(Nsig, rllp[:,0], yerr=rlrms[:,0], fmt='ro', markersize=12, lw=2, label='excluded width = 0')
+plt.errorbar(Nsig, rllp[:,1], yerr=rlrms[:,1], fmt='bx', markersize=15, lw=2, label='excluded width = 5')
+plt.errorbar(Nsig, rllp[:,2], yerr=rlrms[:,2], fmt='gd', markersize=12, lw=2, label='no side-band')
 plt.legend(fontsize=24)
 plt.xlabel('Number of signal events', size=24)
 plt.ylabel('test statistic', size=24)
@@ -287,7 +287,7 @@ plt.errorbar(
     rgsig[:,0],
     yerr=[rgsig[:,0] - rgrms[:,0,0], rgrms[:,0,1] - rgsig[:,0]],
     fmt='ro',
-    markersize=7,
+    markersize=12,
     lw=2,
     label='excluded width = 0'
 )
@@ -296,7 +296,7 @@ plt.errorbar(
     rgsig[:,1],
     yerr=[rgsig[:,1] - rgrms[:,1,0], rgrms[:,1,1] - rgsig[:,1]],
     fmt='bx',
-    markersize=10,
+    markersize=15,
     lw=2,
     label='excluded width = 5'
 )
@@ -305,9 +305,9 @@ plt.errorbar(
     rgsig[:,2],
     yerr=[rgsig[:,2] - rgrms[:,2,0], rgrms[:,2,1] - rgsig[:,2]],
     fmt='gd',
-    markersize=7,
+    markersize=12,
     lw=2,
-    label='no normalization'
+    label='no side-band'
 )
 plt.legend(fontsize=24)
 plt.xlabel('Number of signal events', size=24)
@@ -322,8 +322,8 @@ plt.close(F)
 
 # Reco position vs true Nsig
 F = plt.figure(figsize=(10,6))
-plt.plot(Nsig, rpos[:,0]/rpos[:,2], 'ro', markersize=7 ,lw=2, label='SB (sw=0) / norm')
-plt.plot(Nsig, rpos[:,1]/rpos[:,2], 'bx', markersize=10 ,lw=2, label='SB (sw=5) / norm')
+plt.plot(Nsig, rpos[:,0]/rpos[:,2], 'ro', markersize=12 ,lw=2, label='SB (sw=0) / norm')
+plt.plot(Nsig, rpos[:,1]/rpos[:,2], 'bx', markersize=15 ,lw=2, label='SB (sw=5) / norm')
 plt.hlines(1, Nsig[0], Nsig[-1], color='g', linestyle='dashed', lw=2)
 plt.legend(fontsize=24)
 plt.xlabel('Number of signal events', size=24)
@@ -335,8 +335,8 @@ plt.close(F)
 
 # Reco width vs true Nsig
 F = plt.figure(figsize=(10,6))
-plt.plot(Nsig, rwidth[:,0]/rwidth[:,2], 'ro', markersize=7 ,lw=2, label='SB (sw=0) / norm')
-plt.plot(Nsig, rwidth[:,1]/rwidth[:,2], 'bx', markersize=10 ,lw=2, label='SB (sw=5) / norm')
+plt.plot(Nsig, rwidth[:,0]/rwidth[:,2], 'ro', markersize=12 ,lw=2, label='SB (sw=0) / norm')
+plt.plot(Nsig, rwidth[:,1]/rwidth[:,2], 'bx', markersize=15 ,lw=2, label='SB (sw=5) / norm')
 plt.hlines(1, Nsig[0], Nsig[-1], color='g', linestyle='dashed', lw=2)
 plt.legend(fontsize=24)
 plt.xlabel('Number of signal events', size=24)
@@ -348,8 +348,8 @@ plt.close(F)
 
 # Reco Nsig vs true Nsig
 F = plt.figure(figsize=(10,6))
-plt.plot(Nsig, rsig[:,0]/rsig[:,2], 'ro', markersize=7 ,lw=2, label='SB (sw=0) / norm')
-plt.plot(Nsig, rsig[:,1]/rsig[:,2], 'bx', markersize=10 ,lw=2, label='SB (sw=5) / norm')
+plt.plot(Nsig, rsig[:,0]/rsig[:,2], 'ro', markersize=12 ,lw=2, label='SB (sw=0) / norm')
+plt.plot(Nsig, rsig[:,1]/rsig[:,2], 'bx', markersize=15 ,lw=2, label='SB (sw=5) / norm')
 plt.hlines(1, Nsig[0], Nsig[-1], color='g', linestyle='dashed', lw=2)
 plt.legend(fontsize=24)
 plt.xlabel('Number of signal events', size=24)
@@ -361,8 +361,8 @@ plt.close(F)
 
 # Local negative log p-value vs true Nsig
 F = plt.figure(figsize=(10,6))
-plt.plot(Nsig, rllp[:,0]/rllp[:,2], 'ro', markersize=7 ,lw=2, label='SB (sw=0) / norm')
-plt.plot(Nsig, rllp[:,1]/rllp[:,2], 'bx', markersize=10 ,lw=2, label='SB (sw=5) / norm')
+plt.plot(Nsig, rllp[:,0]/rllp[:,2], 'ro', markersize=12 ,lw=2, label='SB (sw=0) / norm')
+plt.plot(Nsig, rllp[:,1]/rllp[:,2], 'bx', markersize=15 ,lw=2, label='SB (sw=5) / norm')
 plt.hlines(1, Nsig[0], Nsig[-1], color='g', linestyle='dashed', lw=2)
 plt.legend(fontsize=24)
 plt.xlabel('Number of signal events', size=24)
@@ -374,8 +374,8 @@ plt.close(F)
 
 # Global significance vs true Nsig (remove first points because 0)
 F = plt.figure(figsize=(10,6))
-plt.plot(Nsig[1:], rgsig[1:,0]/rgsig[1:,2], 'ro', markersize=7 ,lw=2, label='SB (sw=0) / norm')
-plt.plot(Nsig[1:], rgsig[1:,1]/rgsig[1:,2], 'bx', markersize=10 ,lw=2, label='SB (sw=5) / norm')
+plt.plot(Nsig[1:], rgsig[1:,0]/rgsig[1:,2], 'ro', markersize=12 ,lw=2, label='SB (sw=0) / norm')
+plt.plot(Nsig[1:], rgsig[1:,1]/rgsig[1:,2], 'bx', markersize=15 ,lw=2, label='SB (sw=5) / norm')
 plt.hlines(1, Nsig[0], Nsig[-1], color='g', linestyle='dashed', lw=2)
 plt.legend(fontsize=24)
 plt.xlabel('Number of signal events', size=24)
